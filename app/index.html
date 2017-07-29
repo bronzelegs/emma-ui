@@ -5,23 +5,23 @@
   <meta name="description" content="tdavis blog">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Mind of Man</title>
-  
+
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  
+
   <script src="https://use.fontawesome.com/b90ff24623.js"></script>
-  
-  
+
+
   <!-- Place favicon.ico in the root directory -->
-  
+
   <!-- build:css styles/vendor.css -->
   <!-- bower:css -->
   <!-- endbower -->
   <!-- endbuild -->
-  
+
   <!-- build:css styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
   <!-- endbuild -->
-  
+
   <!-- build:js scripts/vendor/modernizr.js -->
   <script src="/bower_components/modernizr/modernizr.js"></script>
   <!-- endbuild -->
@@ -38,43 +38,40 @@
         <div class=" col-sm-5">
     <span class="avatar-text">The Mind of Man</span>
   </div>
-  <div class="col-sm-7">
-    <div class="row version-table">
+  <div class="col-sm-7 version-table">
+    <div class="row ">
       <p>Emma is a female avatar that uses The Mind of Man for its synapse network.</p>
       <p>there are others.</p></div>
     <table>
       <tr>
-        <th colspan="3" class="my-table-header">Emma version is <em>undefined</em></th>
+        <th colspan="3" class="my-table-header">Emma version is <em><span id="emmaVer"></span></em></th>
       </tr>
       <tr>
-        <td class="my-table-col1" id="ctrl-chan-vers-desc" class="my-table-col1">desc</td>
+        <td id="ctrl-chan-vers-desc" class="my-table-col1"  class="my-table-col1">desc</td>
         <td id="ctrl-chan-vers-string" class="my-table-col2">0.0.0.a</td>
-        <td class="my-table-col3">undefined</td>
+        <td id= "ctrl-chan-timestamp" class="my-table-col3">undefined</td>
       </tr>
       <tr>
         <td id="grammar-vers-desc" class="my-table-col1" class="my-table-col1">desc</td>
         <td id="grammar-vers-string" class="my-table-col2">0.0.0.a</td>
-        <td class="my-table-col3">undefined</td>
+        <td id="grammar-timestamp" class="my-table-col3">undefined</td>
       </tr>
       <tr>
         <td id="model-vers-desc" class="my-table-col1" id="models-vers-desc" class="my-table-col1">desc</td>
         <td id="model-vers-string" class="my-table-col2">0.0.0.a</td>
-        <td class="my-table-col3">undefined</td>
+        <td id="model-timestamp"class="my-table-col3">undefined</td>
       </tr>
       <tr>
         <td id="reactive-vers-desc" class="my-table-col1" class="my-table-col1">desc</td>
         <td id="reactive-vers-string" class="my-table-col2">0.0.0.a</td>
-        <td class="my-table-col3">undefined</td>
+        <td id="reactive-timestamp" class="my-table-col3">undefined</td>
       </tr>
       <tr>
         <td id="ontology-vers-desc" class="my-table-col1" class="my-table-col1">desc</td>
         <td id="ontology-vers-string" class="my-table-col2">0.0.0.a</td>
-        <td class="my-table-col3">undefined</td>
+        <td id="ontology-timestamp" class="my-table-col3">undefined</td>
       </tr>
-    
-    </table>
-    
-    <table>
+
       <tr>
         <th colspan="3" class="my-table-header">components</th>
       </tr>
@@ -116,11 +113,11 @@
       </div>
     </div>
   </div><!-- row for information panel  -->
-  
+
   <div class="row"><!-- session control area -->
     <div class="col-sm-10 avatar-header">
       <span class="avatar-text" onclick="toggleHeader()">Emma</span>
-      
+
       <span class="pull-right">
             <button onclick="myInfoPanel()"><span class="fa fa-info-circle"></span></button>
             <button onclick="myDataPanel()"><span class="fa fa-exclamation-circle"></span></button>
@@ -173,7 +170,7 @@
       <button type="button" onclick="clickedMe()" class="btn btn-primary">Send</button>
       <button type="button" onclick="resetMe()" class="btn btn-default">Reset</button>
     </div>
-  
+
   </div><!-- bot response with indicator title line, message area, and command buttons -->
   <!-- message information panel(s) -->
   <div class="row">
@@ -188,7 +185,7 @@
       </div>
     </div>
   </div><!-- message information panel(s) -->
-  
+
   <br>
 </div><!-- col-lg-12 -->
 <div class="footer">
@@ -216,7 +213,7 @@
       <div class="modal-body">I'm sorry, no logins are supported at this time.</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      
+
       </div>
     </div>
   </div>

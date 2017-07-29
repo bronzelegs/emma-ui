@@ -54,7 +54,7 @@ ga('send', 'pageview');
   console.log('emma.js');
   console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
   console.log('scaffolding by yo webapp 2.0');
-  
+
 })();
 
 function resetMe() {
@@ -70,9 +70,9 @@ function receiveMsg(s) {
   $('#myLastResponse').val(s);
 }
 /*  {
- 
+
  var serverURI = 'http://localhost:8080/session';
- 
+
  function sendMsg(txt, type, sessionid) {
  var auri = serverURI + '/?s=' + encodeURI(txt);
  console.log(auri);
@@ -98,7 +98,8 @@ var defaultVersion = {
     'major': '0',
     'minor': '0',
     'iteration': '0',
-    'release': 'a'
+    'release': 'a',
+    'timestamp': '00/00/00.00:00'
   }
 };
 
@@ -112,10 +113,15 @@ function Version(ver) {
   this.minor =  this.tag.minor;
   this.iteration = this.tag.iteration;
   this.release = this.tag.release;
+  this.timestamp = this.tag.timestamp;
 }
 
 Version.prototype.versionString = function(){
   return (this.major + '.' + this.minor + '.' + this.iteration + '.' + this.release);
+};
+
+Version.prototype.timeStamp = function(){
+  return this.timestamp;
 };
 
 Version.prototype.about = function () {
@@ -123,24 +129,28 @@ Version.prototype.about = function () {
 };
 
 var emmaVer = new Version(defaultVersion);
+$('#emmaVer').text(emmaVer.about() + ' ' + emmaVer.versionString() + ' ' + emmaVer.timeStamp());
 var controlChanVer = new Version(defaultVersion);
 var grammarVer = new Version(defaultVersion);
 $('#grammar-vers-desc').text('grammar ' + grammarVer.about());
 $('#grammar-vers-string').text(grammarVer.versionString());
+$('#grammar-timestamp').text(grammarVer.timeStamp());
 var modelVer = new Version(defaultVersion);
 $('#model-vers-desc').text('model ' + modelVer.about());
 $('#model-vers-string').text(modelVer.versionString());
+$('#model-timestamp').text(modelVer.timeStamp());
 var reactiveChanVer = new Version(defaultVersion);
 $('#reactive-vers-desc').text('reactive ' + reactiveChanVer.about());
 $('#reactive-vers-string').text(reactiveChanVer.versionString());
+$('#reactive-timestamp').text(reactiveChanVer.timeStamp());
 var ontologyVer = new Version(defaultVersion);
 $('#ontology-vers-desc').text('ontology ' + ontologyVer.about());
 $('#ontology-vers-string').text(ontologyVer.versionString());
-
+$('#ontology-timestamp').text(ontologyVer.timeStamp());
 
 function emmaVersion() {
   var emmactrl = 'http://api.bronzelegs.com:3000/emma/version';
-  
+
   var jqxhr = $.getJSON(emmactrl, function () {
       //alert('success');
     })
@@ -211,7 +221,9 @@ function startEmma() {
   console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
   console.log('emmaclient.js v1.0');
   emmaVersion();
-  $('#emmaversion').slideUp().fadeOut();
+  setTimeout(function(){
+    $('#mindofman').slideUp().fadeOut();
+  }, 3000);
   $('#informationPanel').toggle('slow');
   $('#messagePanel').toggle('slow');
   $('#dataPanel').toggle('slow');
