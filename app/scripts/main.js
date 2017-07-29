@@ -199,8 +199,7 @@ function myDataPanel() {
 }
 
 function toggleHeader() {
-  $('#emmaversion').slideToggle();
-  $('#emmaheader').slideToggle();
+  $('#mindofman').slideToggle();
 }
 
 var resetHeaderState = debounce(function () {
@@ -218,8 +217,6 @@ function startEmma() {
   $('#dataPanel').toggle('slow');
   emmaVersion();
 }
-
- 
 
 
 $( document ).ready(function() {

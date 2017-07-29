@@ -1,6 +1,7 @@
 
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,700,800");
 @import url("https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700");
+@import url("https://fonts.googleapis.com/css?family=Dosis:200,300,400,600");
 
 @import url("//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css");
 
@@ -17,8 +18,8 @@ body {
   padding-top: 10px;
   padding-bottom: 10px;
   //font-family: 'Maitree', serif;
-  //font-family: 'Dosis', sans-serif;
-  font-family: 'PT Sans', sans-serif;
+  font-family: 'Dosis', sans-serif;
+  //font-family: 'PT Sans', sans-serif;
   //font-family: 'Open Sans', sans-serif;
 }
 
@@ -83,20 +84,12 @@ body {
   }
 }
 
-
-.emma-bg {
+.emma-full-bg {
   background-image: url('../images/emma-net-300.png');
   background-repeat: no-repeat
 }
 
-.emma-bg-clipped {
-  background-image: url('../images/emma-net-300.png');
-  background-repeat: no-repeat;
-  height: 80px;
-  background-position: -14px -217px;
-  margin-bottom: 10px;
 
-}
 .emma-header {
   padding-left: 0px;
   padding-right: 16px;
@@ -124,13 +117,17 @@ body {
   width: 20%
 }
 
-.avatar-header {
+.avatar-text{
+  margin: 10px;
+  font-size: 24px;
+  font-weight: 400;
   margin-top: 10px;
   margin-bottom: 20px;
 }
 
-.ver-table {
-  margin : 10px 20px 10px 20px;
+
+.version-table {
+  margin : 0px 0px 30px 0px;
 }
 
 .noBullets {
