@@ -5,6 +5,9 @@
   console.log('all ur cod r us');
   console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
   console.log('scaffolding by yo webapp 2.0');
+  console.log('emma.js');
+  console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
+  console.log('All rights reserved.');
 })();
 
 
@@ -49,19 +52,9 @@ ga('send', 'pageview');
 
 // emmaui.js
 
-
-(function () {
-  console.log('emma.js');
-  console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
-  console.log('scaffolding by yo webapp 2.0');
-
-})();
-
 function resetMe() {
   $('#myConversation').text('');
 }
-
-console.log('loaded the emmaui');
 
 function receiveMsg(s) {
   //
@@ -70,9 +63,9 @@ function receiveMsg(s) {
   $('#myLastResponse').val(s);
 }
 /*  {
-
+ 
  var serverURI = 'http://localhost:8080/session';
-
+ 
  function sendMsg(txt, type, sessionid) {
  var auri = serverURI + '/?s=' + encodeURI(txt);
  console.log(auri);
@@ -109,18 +102,19 @@ function Version(ver) {
   }
   this.tag = ver['version'];
   this.description = this.tag.description;
-  this.major =  this.tag.major;
-  this.minor =  this.tag.minor;
+  this.major = this.tag.major;
+  this.minor = this.tag.minor;
   this.iteration = this.tag.iteration;
   this.release = this.tag.release;
   this.timestamp = this.tag.timestamp;
 }
 
-Version.prototype.versionString = function(){
+
+Version.prototype.versionString = function () {
   return (this.major + '.' + this.minor + '.' + this.iteration + '.' + this.release);
 };
 
-Version.prototype.timeStamp = function(){
+Version.prototype.timeStamp = function () {
   return this.timestamp;
 };
 
@@ -128,29 +122,9 @@ Version.prototype.about = function () {
   return (this.description);
 };
 
-var emmaVer = new Version(defaultVersion);
-$('#emmaVer').text(emmaVer.about() + ' ' + emmaVer.versionString() + ' ' + emmaVer.timeStamp());
-var controlChanVer = new Version(defaultVersion);
-var grammarVer = new Version(defaultVersion);
-$('#grammar-vers-desc').text('grammar ' + grammarVer.about());
-$('#grammar-vers-string').text(grammarVer.versionString());
-$('#grammar-timestamp').text(grammarVer.timeStamp());
-var modelVer = new Version(defaultVersion);
-$('#model-vers-desc').text('model ' + modelVer.about());
-$('#model-vers-string').text(modelVer.versionString());
-$('#model-timestamp').text(modelVer.timeStamp());
-var reactiveChanVer = new Version(defaultVersion);
-$('#reactive-vers-desc').text('reactive ' + reactiveChanVer.about());
-$('#reactive-vers-string').text(reactiveChanVer.versionString());
-$('#reactive-timestamp').text(reactiveChanVer.timeStamp());
-var ontologyVer = new Version(defaultVersion);
-$('#ontology-vers-desc').text('ontology ' + ontologyVer.about());
-$('#ontology-vers-string').text(ontologyVer.versionString());
-$('#ontology-timestamp').text(ontologyVer.timeStamp());
-
-function emmaVersion() {
-  var emmactrl = 'http://api.bronzelegs.com:3000/emma/version';
-
+Version.prototype.getVersion = function(url, version) {
+  var _url = (url === undefined) ? 'http://api.bronzelegs.com:3000/emma/version': url;
+  
   var jqxhr = $.getJSON(emmactrl, function () {
       //alert('success');
     })
@@ -160,8 +134,79 @@ function emmaVersion() {
       //alert(data);
       $('#awstest').text(JSON.stringify(data));
       controlChanVer = new Version(data['response']);
-      $('#ctrl-chan-vers-desc').text(controlChanVer.about());
-      $('#ctrl-chan-vers-string').text(controlChanVer.versionString());
+      updateVersionData();
+    })
+    .fail(function () {
+      $('#awstest').text('server does not appear to be running');
+      //alert('error');
+    })
+    .always(function () {
+      //alert('finished');
+    });
+};
+
+function Versions() {
+  this.emmaVer = new Version(defaultVersion);
+  this.controlChanVer = new Version(defaultVersion);
+  this.grammarVer = new Version(defaultVersion);
+  this.modelVer = new Version(defaultVersion);
+  this.reactiveVer = new Version(defaultVersion);
+  this.ontologyVer = new Version(defaultVersion);
+  this.uiVer = new Version(defaultVersion);
+  this.cloudVer = new Version(defaultVersion);
+  this.tmmVer = new Version(defaultVersion);
+}
+
+function updateVersionData() {
+  
+  $('#emmaVer').text(emmaVer.about() + ' ' + emmaVer.versionString() + ' ' + emmaVer.timeStamp());
+  
+  $('#ctrl-chan-vers-desc').text(controlChanVer.about());
+  $('#ctrl-chan-vers-string').text(controlChanVer.versionString());
+  $('#ctrl-chan-vers-timestamp').text(controlChanVer.timeStamp());
+  
+  $('#grammar-vers-desc').text('grammar ' + grammarVer.about());
+  $('#grammar-vers-string').text(grammarVer.versionString());
+  $('#grammar-timestamp').text(grammarVer.timeStamp());
+  
+  $('#model-vers-desc').text('model ' + modelVer.about());
+  $('#model-vers-string').text(modelVer.versionString());
+  $('#model-timestamp').text(modelVer.timeStamp());
+  
+  $('#reactive-vers-desc').text('reactive ' + reactiveVer.about());
+  $('#reactive-vers-string').text(reactiveVer.versionString());
+  $('#reactive-timestamp').text(reactiveVer.timeStamp());
+  
+  $('#ontology-vers-desc').text('ontology ' + ontologyVer.about());
+  $('#ontology-vers-string').text(ontologyVer.versionString());
+  $('#ontology-timestamp').text(ontologyVer.timeStamp());
+  
+  $('#ui-vers-desc').text('UI ' + uiVer.about());
+  $('#ui-vers-string').text(uiVer.versionString());
+  $('#ui-timestamp').text(uiVer.timeStamp());
+  
+  $('#cloud-vers-desc').text('cloud ' + cloudVer.about());
+  $('#cloud-vers-string').text(cloudVer.versionString());
+  $('#cloud-timestamp').text(cloudVer.timeStamp());
+  
+  $('#tmm-vers-desc').text('MindOfMan ' + tmmVer.about());
+  $('#tmm-vers-string').text(tmmVer.versionString());
+  $('#tmm-timestamp').text(tmmVer.timeStamp());
+}
+
+function getEmmaVersion() {
+  var emmactrl = 'http://api.bronzelegs.com:3000/emma/version';
+  
+  var jqxhr = $.getJSON(emmactrl, function () {
+      //alert('success');
+    })
+    .done(function (data) {
+      //alert('second success');
+      console.log(data);
+      //alert(data);
+      $('#awstest').text(JSON.stringify(data));
+      controlChanVer = new Version(data['response']);
+      updateVersionData();
     })
     .fail(function () {
       $('#awstest').text('server does not appear to be running');
@@ -195,21 +240,21 @@ function setLastResponse(txt) {
 
 function myMessagePanel() {
   console.log('myMessages');
-  $('#messagePanel').toggle('slow');
+  $('#messagePanel').fadeToggle('slow');
 }
 
 function myInfoPanel() {
   console.log('myInfoPanel');
-  $('#informationPanel').toggle('slow');
+  $('#informationPanel').fadeToggle('slow');
 }
 
 function myDataPanel() {
   console.log('myDataPanel');
-  $('#dataPanel').toggle('slow');
+  $('#dataPanel').fadeToggle('slow');
 }
 
 function toggleHeader() {
-  $('#mindofman').slideToggle();
+  $('#mindofman').slideToggle('slow');
 }
 
 var resetHeaderState = debounce(function () {
@@ -217,21 +262,31 @@ var resetHeaderState = debounce(function () {
 }, 5000);
 
 // start up
-function startEmma() {
+function init() {
   console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
   console.log('emmaclient.js v1.0');
-  emmaVersion();
-  setTimeout(function(){
-    $('#mindofman').slideUp().fadeOut();
-  }, 3000);
-  $('#informationPanel').toggle('slow');
-  $('#messagePanel').toggle('slow');
-  $('#dataPanel').toggle('slow');
-  emmaVersion();
+  
+  getEmmaVersion();
+  
+  $('#informationPanel').fadeToggle('slow');
+  $('#messagePanel').fadeToggle('slow');
+  $('#dataPanel').fadeToggle('slow');
 }
 
+var emmaVer = new Version(defaultVersion);
+var controlChanVer = new Version(defaultVersion);
+var grammarVer = new Version(defaultVersion);
+var modelVer = new Version(defaultVersion);
+var reactiveVer = new Version(defaultVersion);
+var ontologyVer = new Version(defaultVersion);
+var uiVer = new Version(defaultVersion);
+var cloudVer = new Version(defaultVersion);
+var tmmVer = new Version(defaultVersion);
 
-$( document ).ready(function() {
-  startEmma();
-  console.log( 'emma ready!' );
+$(document).ready(function () {
+  init();
+  setTimeout(function () {
+    $('#mindofman').slideUp().fadeOut();
+  }, 5000);
+  console.log('emma ready!');
 });
