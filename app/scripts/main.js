@@ -92,7 +92,7 @@ var defaultVersion = {
     'minor': '0',
     'iteration': '0',
     'release': 'a',
-    'timestamp': '00/00/00.00:00'
+    'timestamp': '01/01/2015.12:00'
   }
 };
 
@@ -163,7 +163,7 @@ function updateVersionData() {
   
   $('#ctrl-chan-vers-desc').text(controlChanVer.about());
   $('#ctrl-chan-vers-string').text(controlChanVer.versionString());
-  $('#ctrl-chan-vers-timestamp').text(controlChanVer.timeStamp());
+  $('#ctrl-chan-timestamp').text(controlChanVer.timeStamp());
   
   $('#grammar-vers-desc').text('grammar ' + grammarVer.about());
   $('#grammar-vers-string').text(grammarVer.versionString());

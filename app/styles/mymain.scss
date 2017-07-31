@@ -86,7 +86,11 @@ body {
 
 .emma-full-bg {
   background-image: url('../images/emma-net-300.png');
-  background-repeat: no-repeat
+  background-repeat: no-repeat;
+  background-position: 20px 0px;
+}
+.translucent {
+  background-image: url('../images/translucent.png');
 }
 
 
