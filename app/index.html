@@ -100,7 +100,63 @@
   </div>
   
   <div class="col-sm-12 translucent">
-    <div class="row"><!-- a hidden panel -->
+    <div id="loginPanel" class="row section-header">
+      <div class="row ">
+        <span class="avatar-text" onclick="toggleHeader()">Login or create an account</span>
+        <form class="form-horizontal">
+          <fieldset>
+            <!-- Form Name -->
+            <!-- Button -->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="createButton">Create</label>
+              <div class="col-md-4">
+                <button id="createButton" name="createButton" class="btn btn-info">Create an account</button>
+              </div>
+            </div>
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="loginUserName">User (email)</label>
+              <div class="col-md-4">
+                <input id="loginUserName" name="userNameText" type="text" placeholder="me@google.com"
+                       class="form-control input-md" required="">
+              </div>
+            </div>
+            <!-- Password input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="loginPassword">Password</label>
+              <div class="col-md-4">
+                <input id="loginPassword" name="passwordinput" type="password" placeholder="not God"
+                       class="form-control input-md" required="">
+              </div>
+            </div>
+            <!-- Button -->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="Login">Login</label>
+              <div class="col-md-4">
+                <button type='button' d="loginButton" name="Login" class="btn btn-success" onClick='doLogin();'>Login</button>
+              </div>
+            </div>
+          
+          </fieldset>
+        </form>
+      </div>
+      
+      <br>
+      <div id="login" class="row">
+        <div class="col-sm-12">
+          <div class="alert alert-warning alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+            <strong>Please login.</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- col-lg-12 -->
+  
+  
+  <div class="col-sm-12 translucent ">
+    <div id="content" class="row invisible"><!-- a hidden panel -->
       <div id="informationPanel" class="row">
         <div class="col-sm-10">
           <div class="panel panel-default infoPanel">
@@ -119,8 +175,8 @@
       </div><!-- row for information panel  -->
       
       <div class="row"><!-- session control area -->
-        <div class="col-sm-10 avatar-header">
-          <span class="avatar-text" onclick="toggleHeader()">Emma</span>
+        <div class="col-sm-10 section-header">
+          <span class="avatar-text " onclick="toggleHeader()">Emma</span>
           
           <span class="pull-right">
             <button onclick="myInfoPanel()"><span class="fa fa-info-circle"></span></button>
@@ -146,7 +202,7 @@
           </div>
         </div>
         <div class="col-sm-2">
-          <button data-toggle="modal" data-target="#profileDialog" class="thumbnail"><img
+          <button class="thumbnail" onClick="OnProfileClicked(personalityProfile);"><img
             src="images/lg-animated.gif"></button>
         </div>
       </div><!-- a system message panel -->
@@ -168,7 +224,7 @@
           </fieldset>
         </div>
         <div class="col-sm-2">
-          <button data-toggle="modal" data-target="#profileDialog" class="thumbnail"><img
+          <button class="thumbnail" onClick="OnProfileClicked(activeProfile);"><img
             src="images/bronzelegs-logo.png"></button>
         </div>
         <div class="col-sm-12 command-buttons">
@@ -227,15 +283,87 @@
 
 </div>
 <div>
-  <div class="modal fade" id="profileDialog" tabindex="-2" role="dialog" aria-labelledby="myModalLabel2">
+  <div class="modal fade" id="profileModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel2">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header myBlue">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
             aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel2">This is the profile dialog</h4></div>
-        <div class="modal-body">profile information for this user will display here</div>
+          <h4 id='profile-title' class="modal-title" id="myModalLabel2">Profile of</h4></div>
+        <div class="modal-body">
+          
+          <form id="profileForm" class="form-horizontal">
+            <fieldset>
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="userName">UserName</label>
+                <div class="col-md-4">
+                  <input id="userName" name="userName" type="text" placeholder="yourUserName"
+                         class="form-control input-md" required="">
+                
+                </div>
+              </div>
+              
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="firstName">First Name</label>
+                <div class="col-md-4">
+                  <input id="firstName" name="textinput" type="text" placeholder="Emma" class="form-control input-md"
+                         required="">
+                </div>
+              </div>
+              
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="middleName">Middle Name</label>
+                <div class="col-md-4">
+                  <input id="middleName" name="middleName" type="text" placeholder="Lemon"
+                         class="form-control input-md">
+                </div>
+              </div>
+              
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="lastName">Last Name</label>
+                <div class="col-md-4">
+                  <input id="lastName" name="lastName" type="text" placeholder="Peel" class="form-control input-md"
+                         required="">
+                </div>
+              </div>
+              
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="email1">Email 1</label>
+                <div class="col-md-4">
+                  <input id="email1" name="email2" type="text" placeholder="you@yahoo.com"
+                         class="form-control input-md">
+                </div>
+              </div>
+              
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="email2">Email 2</label>
+                <div class="col-md-4">
+                  <input id="email2" name="email2" type="text" placeholder="you@yahoo.com"
+                         class="form-control input-md">
+                </div>
+              </div>
+              
+              <!-- Textarea -->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="about">About You</label>
+                <div class="col-md-4">
+                  <textarea class="form-control" id="about" name="about">a/s/l</textarea>
+                </div>
+              </div>
+            
+            </fieldset>
+          </form>
+        </div>
         <div class="modal-footer">
+          <button id="profileFormSaveButton" type="button" class="btn btn-default invisible" disabled=true
+                  data-dismiss="modal">Save
+          </button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>

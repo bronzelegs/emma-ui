@@ -85,6 +85,11 @@ function receiveMsg(s) {
  }
  */
 
+
+var loginUserName ='';
+var loginPassword = '';
+var profileIsEditable = true;
+
 var defaultVersion = {
   'version': {
     'description': 'default api',
@@ -109,6 +114,25 @@ function Version(ver) {
   this.timestamp = this.tag.timestamp;
 }
 
+var personalityProfile = {
+  'userName': 'emma-zero',
+  'firstName': 'Emma',
+  'middleName': 'Lemon',
+  'lastName': 'Peel',
+  'email1': 'emma@davissoft.com',
+  'about': 'machines should think, humans should learn.',
+  'isABot': true
+};
+
+var activeProfile = {
+  'userName': 'tdavis0525',
+  'firstName': 'Terry',
+  'middleName': 'Alan',
+  'lastName': 'Davis',
+  'email1': 'tdavis0525@gmail.com',
+  'email2': 'tdavis@davissoft.com',
+  'about': 'just a boy and his blog(s)'
+};
 
 Version.prototype.versionString = function () {
   return (this.major + '.' + this.minor + '.' + this.iteration + '.' + this.release);
@@ -122,8 +146,8 @@ Version.prototype.about = function () {
   return (this.description);
 };
 
-Version.prototype.getVersion = function(url, version) {
-  var _url = (url === undefined) ? 'http://api.bronzelegs.com:3000/emma/version': url;
+Version.prototype.getVersion = function (url, version) {
+  var _url = (url === undefined) ? 'http://api.bronzelegs.com:3000/emma/version' : url;
   
   var jqxhr = $.getJSON(emmactrl, function () {
       //alert('success');
@@ -265,14 +289,19 @@ var resetHeaderState = debounce(function () {
 function init() {
   console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
   console.log('emmaclient.js v1.0');
-  
   getEmmaVersion();
-  
+  $('#mindofman').slideUp().fadeOut();
+  $('#content').slideUp().fadeOut();
   $('#informationPanel').fadeToggle('slow');
   $('#messagePanel').fadeToggle('slow');
   $('#dataPanel').fadeToggle('slow');
 }
 
+function postLoginInit() {
+  
+  $('#content').removeClass('invisible').slideDown('slow').fadeIn();
+  $('#loginPanel').removeClass('invisible').slideUp('slow').fadeOut();
+}
 var emmaVer = new Version(defaultVersion);
 var controlChanVer = new Version(defaultVersion);
 var grammarVer = new Version(defaultVersion);
@@ -286,7 +315,97 @@ var tmmVer = new Version(defaultVersion);
 $(document).ready(function () {
   init();
   setTimeout(function () {
-    $('#mindofman').slideUp().fadeOut();
+    //$('#mindofman').slideUp().fadeOut();
   }, 5000);
+  getProfile('tdavis0525');
   console.log('emma ready!');
 });
+
+function getProfiles() {
+  var profilesctrl = 'http://localhost:3000/profiles/';
+  
+  var jqxhr = $.getJSON(profilesctrl, function () {
+      //alert('success');
+    })
+    .done(function (data) {
+      //alert('second success');
+      console.log(data);
+      //alert(data);
+      $('#awstest').text(JSON.stringify(data));
+      controlChanVer = new Version(data['response']);
+      updateVersionData();
+    })
+    .fail(function () {
+      $('#awstest').text('server does not appear to be running');
+      //alert('error');
+    })
+    .always(function () {
+      //alert('finished');
+    });
+}
+
+function getProfile(id) {
+  var profilectrl = 'http://localhost:3000/profiles/' + id;
+  
+  var jqxhr = $.getJSON(profilectrl, function () {
+      //alert('success');
+    })
+    .done(function (data) {
+      //alert('second success');
+      console.log(data);
+      //alert(data);
+      updateActiveProfile(data);
+    })
+    .fail(function () {
+      $('#awstest').text('server does not appear to be running');
+      //alert('error');
+    })
+    .always(function () {
+      //alert('finished');
+    });
+}
+
+function updateActiveProfile(data) {
+  activeProfile = data.profile;
+}
+
+$('#profileForm').bind('change keyup', function () {
+  if (profileIsEditable) {
+    $('#profileFormSaveButton').removeClass('invisible');
+    $('#profileForm').prop('disabled', false);
+    $('#profileFormSaveButton').prop('disabled', false);
+  }
+});
+
+function OnProfileClicked(profile) {
+  setModalData(profile);
+  $('#profileForm :input').prop('disabled', true);
+  $('#profileFormSaveButton').addClass('invisible');
+  $('#profileFormSaveButton').prop('disabled', true);
+  profileIsEditable = (typeof profile.isABot === 'undefined');
+  if (profileIsEditable) {
+    $('#profileForm :input').prop('disabled', false);
+  }
+  
+  $('#profileModal').modal()
+}
+
+function setModalData(profile) {
+  $('#profile-title').text('Profile of ' + profile.userName);
+  $('#userName').val(profile.userName);
+  $('#firstName').val(profile.firstName);
+  $('#middleName').val(profile.middleName);
+  $('#lastName').val(profile.lastName);
+  $('#email1').val(profile.email1);
+  $('#email2').val(profile.email2);
+  $('#about').val(profile.about);
+}
+
+function doLogin(e) {
+
+  loginUserName = $('#loginUserName').val();
+  loginPassword = $('#loginPassword').val();
+  console.log(loginUserName + ' ' + loginPassword);
+  postLoginInit();
+  return false;
+}
