@@ -141,12 +141,12 @@ function Profile (profile){
 
 var defaultProfile = {
   'userName': 'not logged in',
-  'firstName': 'Terry',
-  'middleName': 'Alan',
-  'lastName': 'Davis',
-  'email1': 'tdavis0525@gmail.com',
-  'email2': 'tdavis@davissoft.com',
-  'about': 'just a boy and his blog(s)',
+  'firstName': '',
+  'middleName': '',
+  'lastName': '',
+  'email1': '',
+  'email2': '',
+  'about': '',
   'password': '',
   'isABot': false
 };
@@ -384,7 +384,7 @@ $(document).ready(function () {
 });
 
 function getProfiles() {
-  var profilesctrl = 'http://localhost:3000/profiles/';
+  var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/';
   
   var jqxhr = $.getJSON(profilesctrl, function () {
     })
@@ -401,7 +401,7 @@ function getProfiles() {
 }
 
 function getProfile(id) {
-  var profilectrl = 'http://localhost:3000/profiles/' + id;
+  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
   
   var jqxhr = $.getJSON(profilectrl, function () {
     })
@@ -410,6 +410,31 @@ function getProfile(id) {
       updateActiveProfile(data);
     })
     .fail(function () {
+    })
+    .always(function () {
+    });
+}
+
+function updateProfiles(id, profile) {
+  var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
+  
+
+  $.ajax({
+      url : profilesctrl,
+      type: 'put',
+      data: JSON.stringify(profile),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      dataType: 'json'
+    })
+
+    .done(function (data) {
+      console.log(data);
+      $('#awstest').text(JSON.stringify(data));
+    })
+    .fail(function () {
+      console.log('failed?');
     })
     .always(function () {
     });
@@ -471,6 +496,24 @@ function doLogin() {
   console.log(loginUserName + ' ' + loginPassword);
   postLoginInit();
   return false;
+}
+
+function getModalData(profile) {
+  $('#profile-title').text('Profile of ' + profile.userName);
+  profile.userName = $('#userName').val();
+  profile.firstName = $('#firstName').val();
+  profile.middleName = $('#middleName').val();
+  profile.lastName = $('#lastName').val();
+  profile.email1 = $('#email1').val();
+  profile.email2 = $('#email2').val();
+  profile.about = $('#about').val();
+  return profile;
+}
+
+function doProfileSave(){
+  getModalData(activeProfile);
+  updateProfiles(activeProfile.userName, activeProfile);
+  
 }
 
 function doPasswordSave(profile){
