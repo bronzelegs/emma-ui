@@ -34,7 +34,6 @@ function debounce(func, wait, immediate) {
   };
 }
 
-
 (function (i, s, o, g, r, a, m) {
   i['GoogleAnalyticsObject'] = r;
   i[r] = i[r] || function () {
@@ -51,6 +50,7 @@ ga('create', 'UA-59052020-1', 'auto');
 ga('send', 'pageview');
 
 // emmaui.js
+// temporary api mocks
 
 function resetMe() {
   $('#myConversation').text('');
@@ -62,29 +62,8 @@ function receiveMsg(s) {
   $('#myConversation').prepend('<div class="emma">' + d + '&nbsp' + s + '&nbsp' + $('#msgTextarea').val() + '</hr></div>');
   $('#myLastResponse').val(s);
 }
-/*  {
- 
- var serverURI = 'http://localhost:8080/session';
- 
- function sendMsg(txt, type, sessionid) {
- var auri = serverURI + '/?s=' + encodeURI(txt);
- console.log(auri);
- if (testing) {
- $.ajax(
- {
- url: auri
- })
- .done(function (data) {
- console.log('Sample of data:', data);
- receiveMsg(data.resp);
- });
- } else {
- receiveMsg(txt);
- $('#myLastResponse').text(txt);
- }
- }
- */
 
+//classes
 
 var loginUserName ='';
 var loginPassword = '';
@@ -124,15 +103,83 @@ var personalityProfile = {
   'isABot': true
 };
 
-var activeProfile = {
-  'userName': 'tdavis0525',
+function Profile() {
+  this.userName = 'not logged in';
+  this.firstName = '';
+  this.middleName = '';
+  this.lastName = '';
+  this.emai11 = '';
+  this.email2 = '';
+  this.about = '';
+  this.password = '';
+  this.isABot = false;
+}
+
+function Profile( userName, firstName, middleName, lastName, email1, email2, about, password, isABot){
+  this.userName = userName;
+  this.firstName = firstName;
+  this.middleName = middleName;
+  this.lastName = lastName;
+  this.emai11 = email1;
+  this.email2 = email2;
+  this.about = about;
+  this.password = password;
+  this.isABot = isABot;
+}
+
+function Profile (profile){
+  this.userName = profile.userName;
+  this.firstName = profile.firstName;
+  this.middleName = profile.middleName;
+  this.lastName = profile.lastName;
+  this.emai11 = profile.email1;
+  this.email2 = profile.email2;
+  this.about = profile.about;
+  this.password = profile.password;
+  this.isABot = profile.isABot;
+}
+
+var defaultProfile = {
+  'userName': 'not logged in',
   'firstName': 'Terry',
   'middleName': 'Alan',
   'lastName': 'Davis',
   'email1': 'tdavis0525@gmail.com',
   'email2': 'tdavis@davissoft.com',
-  'about': 'just a boy and his blog(s)'
+  'about': 'just a boy and his blog(s)',
+  'password': '',
+  'isABot': false
 };
+
+var activeProfile = defaultProfile;
+
+function Session(){
+  this._activeUser = '';
+  this._personality = '';
+  this.connected = false;
+}
+
+
+Session.prototype.setActiveUser = function(profile){
+  this._activeUser = profile;
+}
+
+Session.prototype.setPersonality = function( profile){
+  this._personality = profile;
+}
+
+function Version(ver) {
+  if (ver == undefined) {
+    ver = defaultVersion;
+  }
+  this.tag = ver['version'];
+  this.description = this.tag.description;
+  this.major = this.tag.major;
+  this.minor = this.tag.minor;
+  this.iteration = this.tag.iteration;
+  this.release = this.tag.release;
+  this.timestamp = this.tag.timestamp;
+}
 
 Version.prototype.versionString = function () {
   return (this.major + '.' + this.minor + '.' + this.iteration + '.' + this.release);
@@ -168,6 +215,8 @@ Version.prototype.getVersion = function (url, version) {
       //alert('finished');
     });
 };
+
+// utility functions
 
 function Versions() {
   this.emmaVer = new Version(defaultVersion);
@@ -218,29 +267,43 @@ function updateVersionData() {
   $('#tmm-timestamp').text(tmmVer.timeStamp());
 }
 
+function updateVersionSelector(selectorStub, version){
+  $('#' + selectorStub + '-vers-desc').text('MindOfMan ' + version.about());
+  $('#' + selectorStub + '-vers-string').text(version.versionString());
+  $('#' + selectorStub + '-timestamp').text(version.timeStamp());
+}
+
 function getEmmaVersion() {
   var emmactrl = 'http://api.bronzelegs.com:3000/emma/version';
   
   var jqxhr = $.getJSON(emmactrl, function () {
-      //alert('success');
     })
     .done(function (data) {
-      //alert('second success');
-      console.log(data);
-      //alert(data);
+      console.log('version data' + data);
       $('#awstest').text(JSON.stringify(data));
       controlChanVer = new Version(data['response']);
       updateVersionData();
     })
     .fail(function () {
-      $('#awstest').text('server does not appear to be running');
-      //alert('error');
     })
     .always(function () {
-      //alert('finished');
     });
 }
 
+function getVersion(url, version, selector) {
+  var jqxhr = $.getJSON(url, function () {
+    })
+    .done(function (data) {
+      console.log('version data' + data);
+      version = new Version(data['response']);
+      updateVersionSelector(selector);
+    })
+    .fail(function () {
+      $('#awstest').text('server does not appear to be running');
+    })
+    .always(function () {
+    });
+}
 
 function sendMsg(txt, type, sessionid) {
   receiveMsg(txt);
@@ -290,7 +353,9 @@ function init() {
   console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
   console.log('emmaclient.js v1.0');
   getEmmaVersion();
-  $('#mindofman').slideUp().fadeOut();
+  setTimeout(function () {
+    $('#mindofman').slideUp().fadeOut();
+  }, 5000);
   $('#content').slideUp().fadeOut();
   $('#informationPanel').fadeToggle('slow');
   $('#messagePanel').fadeToggle('slow');
@@ -298,10 +363,10 @@ function init() {
 }
 
 function postLoginInit() {
-  
   $('#content').removeClass('invisible').slideDown('slow').fadeIn();
-  $('#loginPanel').removeClass('invisible').slideUp('slow').fadeOut();
+  $('#loginPanel').addClass('invisible').slideUp('slow').fadeOut();
 }
+
 var emmaVer = new Version(defaultVersion);
 var controlChanVer = new Version(defaultVersion);
 var grammarVer = new Version(defaultVersion);
@@ -314,9 +379,6 @@ var tmmVer = new Version(defaultVersion);
 
 $(document).ready(function () {
   init();
-  setTimeout(function () {
-    //$('#mindofman').slideUp().fadeOut();
-  }, 5000);
   getProfile('tdavis0525');
   console.log('emma ready!');
 });
@@ -325,22 +387,16 @@ function getProfiles() {
   var profilesctrl = 'http://localhost:3000/profiles/';
   
   var jqxhr = $.getJSON(profilesctrl, function () {
-      //alert('success');
     })
     .done(function (data) {
-      //alert('second success');
       console.log(data);
-      //alert(data);
       $('#awstest').text(JSON.stringify(data));
       controlChanVer = new Version(data['response']);
       updateVersionData();
     })
     .fail(function () {
-      $('#awstest').text('server does not appear to be running');
-      //alert('error');
     })
     .always(function () {
-      //alert('finished');
     });
 }
 
@@ -348,20 +404,14 @@ function getProfile(id) {
   var profilectrl = 'http://localhost:3000/profiles/' + id;
   
   var jqxhr = $.getJSON(profilectrl, function () {
-      //alert('success');
     })
     .done(function (data) {
-      //alert('second success');
       console.log(data);
-      //alert(data);
       updateActiveProfile(data);
     })
     .fail(function () {
-      $('#awstest').text('server does not appear to be running');
-      //alert('error');
     })
     .always(function () {
-      //alert('finished');
     });
 }
 
@@ -377,6 +427,11 @@ $('#profileForm').bind('change keyup', function () {
   }
 });
 
+$('#passwordForm').bind('change keyup', function () {
+  if (profileIsEditable) {
+    $('#passwordFormSaveButton').removeClass('invisible');
+  }
+});
 function OnProfileClicked(profile) {
   setModalData(profile);
   $('#profileForm :input').prop('disabled', true);
@@ -390,6 +445,15 @@ function OnProfileClicked(profile) {
   $('#profileModal').modal()
 }
 
+function OnPasswordEditClicked(profile) {
+  setModalData(profile);
+  $('#passwordFormSaveButton').addClass('invisible');
+  //$('#passwordEditModal').prop('disabled', true);
+
+  
+  $('#passwordModal').modal()
+}
+
 function setModalData(profile) {
   $('#profile-title').text('Profile of ' + profile.userName);
   $('#userName').val(profile.userName);
@@ -401,11 +465,19 @@ function setModalData(profile) {
   $('#about').val(profile.about);
 }
 
-function doLogin(e) {
-
+function doLogin() {
   loginUserName = $('#loginUserName').val();
   loginPassword = $('#loginPassword').val();
   console.log(loginUserName + ' ' + loginPassword);
   postLoginInit();
   return false;
+}
+
+function doPasswordSave(profile){
+  var pw1 = $('#passwordinput').val();
+  var pw2 =$('#passwordinputclone').val();
+  if (pw1 === pw2) {
+    profile.password = pw1;
+  }
+  $('#passwordModal').modal('hide');
 }
