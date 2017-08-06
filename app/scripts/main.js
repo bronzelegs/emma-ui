@@ -162,11 +162,11 @@ function Session(){
 
 Session.prototype.setActiveUser = function(profile){
   this._activeUser = profile;
-}
+};
 
 Session.prototype.setPersonality = function( profile){
   this._personality = profile;
-}
+};
 
 function Version(ver) {
   if (ver == undefined) {
@@ -377,11 +377,7 @@ var uiVer = new Version(defaultVersion);
 var cloudVer = new Version(defaultVersion);
 var tmmVer = new Version(defaultVersion);
 
-$(document).ready(function () {
-  init();
-  getProfile('tdavis0525');
-  console.log('emma ready!');
-});
+
 
 function getProfiles() {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/';
@@ -418,23 +414,15 @@ function getProfile(id) {
 function updateProfiles(id, profile) {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
   
-
-  $.ajax({
-      url : profilesctrl,
-      type: 'put',
-      data: JSON.stringify(profile),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      dataType: 'json'
+  $.ajax({url : profilesctrl,type: 'put',data: JSON.stringify(profile),headers: {},dataType: 'json'
     })
-
     .done(function (data) {
       console.log(data);
-      $('#awstest').text(JSON.stringify(data));
+      return true;
     })
     .fail(function () {
       console.log('failed?');
+      return false;
     })
     .always(function () {
     });
@@ -457,7 +445,13 @@ $('#passwordForm').bind('change keyup', function () {
     $('#passwordFormSaveButton').removeClass('invisible');
   }
 });
-function OnProfileClicked(profile) {
+
+function OnCreateAccount(){
+  var newProfile= new Profile();
+  OnPasswordEdit(newProfile);
+  OnProfileEdit(newProfile);
+}
+function OnProfileEdit(profile) {
   setModalData(profile);
   $('#profileForm :input').prop('disabled', true);
   $('#profileFormSaveButton').addClass('invisible');
@@ -470,13 +464,13 @@ function OnProfileClicked(profile) {
   $('#profileModal').modal()
 }
 
-function OnPasswordEditClicked(profile) {
+function OnPasswordEdit(profile) {
   setModalData(profile);
   $('#passwordFormSaveButton').addClass('invisible');
   //$('#passwordEditModal').prop('disabled', true);
 
   
-  $('#passwordModal').modal()
+  $('#passwordModal').modal();
 }
 
 function setModalData(profile) {
@@ -512,7 +506,11 @@ function getModalData(profile) {
 
 function doProfileSave(){
   getModalData(activeProfile);
-  updateProfiles(activeProfile.userName, activeProfile);
+  if (updateProfiles(activeProfile.userName, activeProfile)){
+    
+  } else {
+    
+  }
   
 }
 
@@ -520,7 +518,93 @@ function doPasswordSave(profile){
   var pw1 = $('#passwordinput').val();
   var pw2 =$('#passwordinputclone').val();
   if (pw1 === pw2) {
+    //alert('equal')
     profile.password = pw1;
+  } else {
+    //alert('not even close')
   }
+  
   $('#passwordModal').modal('hide');
 }
+
+/*
+ <a href="#" class="text-muted">Muted link</a>
+ <a href="#" class="text-primary">Primary link</a>
+ <a href="#" class="text-success">Success link</a>
+ <a href="#" class="text-info">Info link</a>
+ <a href="#" class="text-warning">Warning link</a>
+ <a href="#" class="text-danger">Danger link</a>
+ 
+ */
+function doMsgModal(title, text){
+
+  $('#msg-modal-title').text(title);
+  $('#msg-modal-text').text(text);
+  $('#msgModal').modal();
+}
+
+function ConfirmModal(title, msg, headerColor) {
+  var dfd = jQuery.Deferred();
+  var $confirmDlg = $('#confirmModal');
+  $confirmDlg.addClass( headerColor);
+  $confirmDlg.modal('show');
+  $('#confirm-modal-title').text(title);
+  $('#confirm-modal-text').text(confirm);
+  $('#confirmYesButton').off('click').click(function () {
+    $confirmDlg.modal('hide');
+    dfd.resolve(1);
+    return 1;
+  });
+  $('#confirmNoButton').off('click').click(function () {
+    $confirm.modal('hide');
+    return 0;
+  });
+  return dfd.promise();
+}
+
+function doConfirmModal(title, message, headerColor) {
+  var a = ConfirmModal(title, message, headerColor);
+  a.then(function (b) {
+    console.log(b);
+    alert(b)
+  })
+}
+
+function doErrorModal(title, text, desc){
+  $('#error-modal-title').text(title);
+  $('#error-modal-text').text(text);
+  $('#error-modal-desc').text(desc);
+  $('#errorModal').modal();
+}
+
+function doLogoutModal(){
+  doErrorModal('Je ne canna dunna', 'That code is not in my system right now', 'It probably will be soon')
+}
+
+// start up
+function init() {
+  console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
+  console.log('emmaclient.js v1.0');
+  getEmmaVersion();
+  setTimeout(function () {
+    $('#mindofman').slideUp().fadeOut();
+  }, 5000);
+  $('#content').slideUp().fadeOut();
+  $('#informationPanel').fadeToggle('slow');
+  $('#messagePanel').fadeToggle('slow');
+  $('#dataPanel').fadeToggle('slow');
+}
+
+function postLoginInit() {
+  $('#content').removeClass('invisible').slideDown('slow').fadeIn();
+  $('#loginPanel').addClass('invisible').slideUp('slow').fadeOut();
+}
+
+$(document).ready(function () {
+  init();
+  getProfile('tdavis0525');
+  console.log('emma ready!');
+  //doMsgModal('test', 'this is a test');
+  //doConfirmModal('confirm', 'still a test');
+  //doErrorModal('error','sterilize!')
+});

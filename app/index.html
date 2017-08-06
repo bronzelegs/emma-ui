@@ -103,7 +103,7 @@
     <div id="loginPanel" class="row section-header">
       <div class="row ">
         <span class="avatar-text" onclick="toggleHeader()">Login or create an account</span>
-        </div>
+      </div>
       <div class="row">
         <div class="col-sm-8 offset-sm-2">
           <form class="form-horizontal">
@@ -113,7 +113,8 @@
               <div class="form-group">
                 <label class="col-md-4 control-label" for="createButton">Create</label>
                 <div class="col-md-4">
-                  <button id="createButton" type="button" name="createButton" class="btn btn-info"  onClick='OnPasswordEditClicked(activeProfile);'>Create an account
+                  <button id="createButton" type="button" name="createButton" class="btn btn-info"
+                          onClick='OnCreateAccount(activeProfile);'>Create an account
                   </button>
                 </div>
               </div>
@@ -142,7 +143,6 @@
                   </button>
                 </div>
               </div>
-            
             </fieldset>
           </form>
         </div>
@@ -160,7 +160,6 @@
       </div>
     </div>
   </div><!-- col-lg-12 -->
-  
   
   <div class="col-sm-12 translucent ">
     <div id="content" class="row invisible"><!-- a hidden panel -->
@@ -189,7 +188,7 @@
             <button onclick="myInfoPanel()"><span class="fa fa-info-circle"></span></button>
             <button onclick="myDataPanel()"><span class="fa fa-exclamation-circle"></span></button>
             <button onclick="myMessagePanel()"><span class="fa fa-bell"></span></button>
-            <button data-toggle="modal" data-target="#myModal"><span class="fa fa-sign-in"></span></button>
+            <button data-toggle="modal" ><span class="fa fa-sign-in" onClick="doLogoutModal();"></span></button>
           </span><!-- toolbar -->
         </div>
       </div><!-- session control area -->
@@ -209,7 +208,7 @@
           </div>
         </div>
         <div class="col-sm-2">
-          <button class="thumbnail" onClick="OnProfileClicked(personalityProfile);"><img
+          <button class="thumbnail" onClick="OnProfileEdit(personalityProfile);"><img
             src="images/lg-animated.gif"></button>
         </div>
       </div><!-- a system message panel -->
@@ -231,7 +230,7 @@
           </fieldset>
         </div>
         <div class="col-sm-2">
-          <button class="thumbnail" onClick="OnProfileClicked(activeProfile);"><img
+          <button class="thumbnail" onClick="OnProfileEdit(activeProfile);"><img
             src="images/bronzelegs-logo.png"></button>
         </div>
         <div class="col-sm-12 command-buttons">
@@ -272,23 +271,71 @@
   </div>
 </div>
 
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="msgLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header myBlue">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+      <div id="msg-modal-header" class="modal-header bg-info ">
+        <button type="button" class="close" data-dismiss="modal" ari  a-label="Close"><span
           aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Login</h4></div>
-      <div class="modal-body">I'm sorry, no logins are supported at this time.</div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      
+        <h4 class="modal-title text-white">Message: <span id="msg-modal-title">Title</span></h4></div>
+      <div class="modal-body">
+        <p>An unexpected error has occured.</p>
+        <p id="msg-modal-text">error text goes here</p>
+        <p id="msg-modal-desc"></p>
+        </br>
+        <div class="modal-footer">
+          <button id="msgYesButton" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+ 
+        </div>
       </div>
     </div>
   </div>
-
 </div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div id="confirm-modal-header" class="modal-header bg-primary ">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title text-white">Message: <span id="confirm-modal-title">Title</span></h4></div>
+      <div class="modal-body">
+        <p>Make a choice here</p>
+        <p id="confirm-modal-text">error text goes here</p>
+        <p id="confirm-modal-desc"></p>
+        </br>
+        <div class="modal-footer">
+          <button id="confirmYesButton" type="button" class="btn btn-default" data-dismiss="modal">Yes</button>
+  
+          <button id ="confirmNoButton" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div id="error-modal-header" class="modal-header bg-danger">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title bg-danger text-white">Error: <span id="error-modal-title">Title</span></h4></div>
+      <div class="modal-body">
+        <p>An unexpected error has occured.</p>
+        <p id="error-modal-text">error text goes here</p>
+        <p id="error-modal-desc">...and thats all I know</p>
+        </br>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div>
   <div class="modal fade" id="profileModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel2">
     <div class="modal-dialog" role="document">
@@ -298,7 +345,6 @@
             aria-hidden="true">&times;</span></button>
           <h4 id='profile-title' class="modal-title" id="myModalLabel2">Profile of</h4></div>
         <div class="modal-body">
-          
           <form id="profileForm" class="form-horizontal">
             <fieldset>
               <!-- Text input-->
@@ -307,10 +353,8 @@
                 <div class="col-md-4">
                   <input id="userName" name="userName" type="text" placeholder="yourUserName"
                          class="form-control " required="">
-                
                 </div>
               </div>
-              
               <!-- Text input-->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="firstName">First Name</label>
@@ -319,7 +363,6 @@
                          required="">
                 </div>
               </div>
-              
               <!-- Text input-->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="middleName">Middle Name</label>
@@ -328,7 +371,6 @@
                          class="form-control ">
                 </div>
               </div>
-              
               <!-- Text input-->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="lastName">Last Name</label>
@@ -337,7 +379,6 @@
                          required="">
                 </div>
               </div>
-              
               <!-- Text input-->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="email1">Email 1</label>
@@ -346,7 +387,6 @@
                          class="form-control ">
                 </div>
               </div>
-              
               <!-- Text input-->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="email2">Email 2</label>
@@ -355,15 +395,13 @@
                          class="form-control ">
                 </div>
               </div>
-              
               <!-- Textarea -->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="about">About You</label>
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <textarea class="form-control" id="about" name="about">a/s/l</textarea>
                 </div>
               </div>
-            
             </fieldset>
           </form>
         </div>
@@ -371,7 +409,6 @@
           <button id="profileFormSaveButton" type="button" class="btn btn-default invisible" disabled=true
                   data-dismiss="modal" onCLick="doProfileSave();">Save
           </button>
-          
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
@@ -379,7 +416,7 @@
   </div>
 </div>
 
-<div >
+<div>
   <div class="modal fade" id="passwordModal" tabindex="-2" role="dialog" aria-labelledby="passwordModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
