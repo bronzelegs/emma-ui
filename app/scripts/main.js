@@ -65,7 +65,7 @@ function receiveMsg(s) {
 
 //classes
 
-var loginUserName ='';
+var loginUserName = '';
 var loginPassword = '';
 var profileIsEditable = true;
 
@@ -104,7 +104,7 @@ var personalityProfile = {
 };
 
 function Profile() {
-  this.userName = 'not logged in';
+  this.userName = '';
   this.firstName = '';
   this.middleName = '';
   this.lastName = '';
@@ -115,19 +115,8 @@ function Profile() {
   this.isABot = false;
 }
 
-function Profile( userName, firstName, middleName, lastName, email1, email2, about, password, isABot){
-  this.userName = userName;
-  this.firstName = firstName;
-  this.middleName = middleName;
-  this.lastName = lastName;
-  this.emai11 = email1;
-  this.email2 = email2;
-  this.about = about;
-  this.password = password;
-  this.isABot = isABot;
-}
 
-function Profile (profile){
+Profile.prototype.clone = function (profile) {
   this.userName = profile.userName;
   this.firstName = profile.firstName;
   this.middleName = profile.middleName;
@@ -137,10 +126,10 @@ function Profile (profile){
   this.about = profile.about;
   this.password = profile.password;
   this.isABot = profile.isABot;
-}
+};
 
 var defaultProfile = {
-  'userName': 'not logged in',
+  'userName': '',
   'firstName': '',
   'middleName': '',
   'lastName': '',
@@ -153,18 +142,18 @@ var defaultProfile = {
 
 var activeProfile = defaultProfile;
 
-function Session(){
+function Session() {
   this._activeUser = '';
   this._personality = '';
   this.connected = false;
 }
 
 
-Session.prototype.setActiveUser = function(profile){
+Session.prototype.setActiveUser = function (profile) {
   this._activeUser = profile;
 };
 
-Session.prototype.setPersonality = function( profile){
+Session.prototype.setPersonality = function (profile) {
   this._personality = profile;
 };
 
@@ -267,7 +256,7 @@ function updateVersionData() {
   $('#tmm-timestamp').text(tmmVer.timeStamp());
 }
 
-function updateVersionSelector(selectorStub, version){
+function updateVersionSelector(selectorStub, version) {
   $('#' + selectorStub + '-vers-desc').text('MindOfMan ' + version.about());
   $('#' + selectorStub + '-vers-string').text(version.versionString());
   $('#' + selectorStub + '-timestamp').text(version.timeStamp());
@@ -348,24 +337,7 @@ var resetHeaderState = debounce(function () {
   toggleHeader();
 }, 5000);
 
-// start up
-function init() {
-  console.log('Copyright (C) Terrance Davis 2015, 2016, 2017');
-  console.log('emmaclient.js v1.0');
-  getEmmaVersion();
-  setTimeout(function () {
-    $('#mindofman').slideUp().fadeOut();
-  }, 5000);
-  $('#content').slideUp().fadeOut();
-  $('#informationPanel').fadeToggle('slow');
-  $('#messagePanel').fadeToggle('slow');
-  $('#dataPanel').fadeToggle('slow');
-}
 
-function postLoginInit() {
-  $('#content').removeClass('invisible').slideDown('slow').fadeIn();
-  $('#loginPanel').addClass('invisible').slideUp('slow').fadeOut();
-}
 
 var emmaVer = new Version(defaultVersion);
 var controlChanVer = new Version(defaultVersion);
@@ -376,7 +348,6 @@ var ontologyVer = new Version(defaultVersion);
 var uiVer = new Version(defaultVersion);
 var cloudVer = new Version(defaultVersion);
 var tmmVer = new Version(defaultVersion);
-
 
 
 function getProfiles() {
@@ -397,7 +368,7 @@ function getProfiles() {
 }
 
 function getProfile(id) {
-  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
+  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
   
   var jqxhr = $.getJSON(profilectrl, function () {
     })
@@ -414,7 +385,8 @@ function getProfile(id) {
 function updateProfiles(id, profile) {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
   
-  $.ajax({url : profilesctrl,type: 'put',data: JSON.stringify(profile),headers: {},dataType: 'json'
+  $.ajax({
+      url: profilesctrl, type: 'put', data: JSON.stringify(profile), headers: {}, dataType: 'json'
     })
     .done(function (data) {
       console.log(data);
@@ -432,25 +404,6 @@ function updateActiveProfile(data) {
   activeProfile = data.profile;
 }
 
-$('#profileForm').bind('change keyup', function () {
-  if (profileIsEditable) {
-    $('#profileFormSaveButton').removeClass('invisible');
-    $('#profileForm').prop('disabled', false);
-    $('#profileFormSaveButton').prop('disabled', false);
-  }
-});
-
-$('#passwordForm').bind('change keyup', function () {
-  if (profileIsEditable) {
-    $('#passwordFormSaveButton').removeClass('invisible');
-  }
-});
-
-function OnCreateAccount(){
-  var newProfile= new Profile();
-  OnPasswordEdit(newProfile);
-  OnProfileEdit(newProfile);
-}
 function OnProfileEdit(profile) {
   setModalData(profile);
   $('#profileForm :input').prop('disabled', true);
@@ -466,15 +419,17 @@ function OnProfileEdit(profile) {
 
 function OnPasswordEdit(profile) {
   setModalData(profile);
-  $('#passwordFormSaveButton').addClass('invisible');
+  if ($('#passwordFormSaveButton').addClass('invisible')) {
+    alert('passed');
+  }
   //$('#passwordEditModal').prop('disabled', true);
-
   
   $('#passwordModal').modal();
 }
 
 function setModalData(profile) {
-  $('#profile-title').text('Profile of ' + profile.userName);
+  var _userName =profile.userName == '' ? 'new user' : profile.userName;
+  $('#profile-title').text('Profile of ' + _userName);
   $('#userName').val(profile.userName);
   $('#firstName').val(profile.firstName);
   $('#middleName').val(profile.middleName);
@@ -493,20 +448,19 @@ function doLogin() {
 }
 
 function getModalData(profile) {
-  $('#profile-title').text('Profile of ' + profile.userName);
-  profile.userName = $('#userName').val();
-  profile.firstName = $('#firstName').val();
-  profile.middleName = $('#middleName').val();
-  profile.lastName = $('#lastName').val();
-  profile.email1 = $('#email1').val();
-  profile.email2 = $('#email2').val();
-  profile.about = $('#about').val();
+  profile.userName = $('#userName').val().trim();
+  profile.firstName = $('#firstName').val().trim();
+  profile.middleName = $('#middleName').val().trim();
+  profile.lastName = $('#lastName').val().trim();
+  profile.email1 = $('#email1').val().trim();
+  profile.email2 = $('#email2').val().trim();
+  profile.about = $('#about').val().trim();
   return profile;
 }
 
-function doProfileSave(){
+function doProfileSave() {
   getModalData(activeProfile);
-  if (updateProfiles(activeProfile.userName, activeProfile)){
+  if (updateProfiles(activeProfile.userName, activeProfile)) {
     
   } else {
     
@@ -514,18 +468,107 @@ function doProfileSave(){
   
 }
 
-function doPasswordSave(profile){
-  var pw1 = $('#passwordinput').val();
-  var pw2 =$('#passwordinputclone').val();
-  if (pw1 === pw2) {
-    //alert('equal')
-    profile.password = pw1;
-  } else {
-    //alert('not even close')
+function OnCreateAccount() {
+  var newProfile = new Profile();
+  var retVal = false;
+  
+  var passwordPromise = OnPasswordModal(newProfile);
+  
+  passwordPromise.then(function (retVal) {
+    console.log('ret from password ' + retVal);
+    if (retVal){
+      console.log(newProfile);
+    }
+  })
+  .then ( function(retVal) {
+    var profilePromise = OnProfileModal(newProfile);
+    profilePromise.then(function (retVal) {
+      console.log('ret from profile ' + retVal);
+      
+    });
+  });
+}
+
+
+function OnProfileModal(profile) {
+  var dfd = jQuery.Deferred();
+  
+  var $profileForm =  $('#profileForm :input');
+  var $profileDlg = $('#profileModal');
+  var $profileSaveButton = $('#profileSaveButton');
+  var $profileCloseButton = $('#profileCloseButton');
+  var $profileError = $('#profileError');
+  var $profileFirstName = $('#firstName');
+  var $profileEmail = $('#email1');
+  
+  $profileError.addClass('invisible');
+  $profileForm.prop('disabled', true);
+  $profileSaveButton.addClass('invisible');
+  $profileSaveButton.prop('disabled', true);
+  
+  setModalData(profile);
+  
+  profileIsEditable = (profile.isABot === false);
+  if (profileIsEditable) {
+    $profileForm.prop('disabled', false);
   }
   
-  $('#passwordModal').modal('hide');
+  $profileError.addClass('invisible');
+  $profileDlg.modal('show');
+
+  $profileSaveButton.off('click').click(function () {
+    // at least first name and email
+    if (($profileFirstName.val().length) && ($profileEmail.val().length)){
+      dfd.resolve(true);
+      $profileDlg.modal('hide');
+      return true;
+    } else {
+      $profileError.removeClass('invisible');
+    }
+  });
+  $profileCloseButton.off('click').click(function () {
+    $profileDlg.modal('hide');
+    dfd.reject(false);
+    return false;
+  });
+  return dfd.promise();
 }
+
+function OnPasswordModal(profile) {
+  var dfd = jQuery.Deferred();
+  var $passwordDlg = $('#passwordModal');
+  var $passwordError = $('#passwordError');
+  var $passwordSaveButton = $('#passwordSaveButton');
+  var $passwordCancelButton = $('#passwordCancelButton');
+  var $passwordUserName= $('#passwordUserName');
+  var $passwordinput= $('#passwordinput');
+  var $passwordinputclone = $('#passwordinputclone');
+  
+  $passwordError.addClass('invisible');
+  $passwordDlg.modal('show');
+  
+  $passwordSaveButton.off('click').click(function () {
+    var pw1 = $passwordinput.val();
+    var pw2 = $passwordinputclone.val();
+    if (pw1 === pw2) {
+      profile.userName = $passwordUserName.val();
+      profile.password = pw1;
+      dfd.resolve(true);
+      $passwordDlg.modal('hide');
+      return true;
+    } else {
+      $passwordError.removeClass('invisible');
+    }
+  });
+  
+  $passwordCancelButton.off('click').click(function () {
+    $passwordDlg.modal('hide');
+    dfd.reject(false);
+    return false;
+  });
+  return dfd.promise();
+}
+
 
 /*
  <a href="#" class="text-muted">Muted link</a>
@@ -536,23 +579,23 @@ function doPasswordSave(profile){
  <a href="#" class="text-danger">Danger link</a>
  
  */
-function doMsgModal(title, text){
-
+function doMsgModal(title, text) {
+  
   $('#msg-modal-title').text(title);
   $('#msg-modal-text').text(text);
   $('#msgModal').modal();
 }
 
-function ConfirmModal(title, msg, headerColor) {
+function ConfirmModal(title, msg) {
   var dfd = jQuery.Deferred();
   var $confirmDlg = $('#confirmModal');
-  $confirmDlg.addClass( headerColor);
   $confirmDlg.modal('show');
   $('#confirm-modal-title').text(title);
   $('#confirm-modal-text').text(confirm);
   $('#confirmYesButton').off('click').click(function () {
     $confirmDlg.modal('hide');
-    dfd.resolve(1);
+    //dfd.resolve(1);
+    $('#passwordEditModal').modal();
     return 1;
   });
   $('#confirmNoButton').off('click').click(function () {
@@ -570,14 +613,15 @@ function doConfirmModal(title, message, headerColor) {
   })
 }
 
-function doErrorModal(title, text, desc){
+
+function doErrorModal(title, text, desc) {
   $('#error-modal-title').text(title);
   $('#error-modal-text').text(text);
   $('#error-modal-desc').text(desc);
   $('#errorModal').modal();
 }
 
-function doLogoutModal(){
+function doLogoutModal() {
   doErrorModal('Je ne canna dunna', 'That code is not in my system right now', 'It probably will be soon')
 }
 
@@ -593,6 +637,21 @@ function init() {
   $('#informationPanel').fadeToggle('slow');
   $('#messagePanel').fadeToggle('slow');
   $('#dataPanel').fadeToggle('slow');
+  
+  var $profileSaveButton = $('#profileSaveButton');
+  $('#profileForm').bind('change keyup', function () {
+    if (profileIsEditable) {
+      $profileSaveButton.removeClass('invisible');
+      $('#profileForm').prop('disabled', false);
+      $profileSaveButton.prop('disabled', false);
+    }
+  });
+  
+  $('#passwordForm').bind('change keyup', function () {
+    if (profileIsEditable) {
+      $('#passwordSaveButton').removeClass('invisible');
+    }
+  });
 }
 
 function postLoginInit() {

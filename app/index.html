@@ -383,7 +383,7 @@
               <div class="form-group">
                 <label class="col-md-4 control-label" for="email1">Email 1</label>
                 <div class="col-md-4">
-                  <input id="email1" name="email2" type="text" placeholder="you@yahoo.com"
+                  <input id="email1" name="email1" type="text" placeholder="you@yahoo.com"
                          class="form-control ">
                 </div>
               </div>
@@ -402,14 +402,13 @@
                   <textarea class="form-control" id="about" name="about">a/s/l</textarea>
                 </div>
               </div>
+              <div class="text-warning invisible" id="profileError">Please specify at least a first name and an email.</div>
             </fieldset>
           </form>
         </div>
         <div class="modal-footer">
-          <button id="profileFormSaveButton" type="button" class="btn btn-default invisible" disabled=true
-                  data-dismiss="modal" onCLick="doProfileSave();">Save
-          </button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button id="profileSaveButton" type="button" class="btn btn-default invisible secondary" disabled=true">Save</button>
+          <button id="profileCloseButton" type="button" class="btn btn-primary" >Close</button>
         </div>
       </div>
     </div>
@@ -425,7 +424,6 @@
             aria-hidden="true">&times;</span></button>
           <h4 id='password-edit-title' class="modal-title" id="passwordModalLabel">Profile of</h4></div>
         <div class="modal-body">
-          
           <form id="passwordForm" class="form-horizontal">
             <fieldset>
               <!-- Text input-->
@@ -434,39 +432,34 @@
                 <div class="col-md-4">
                   <input id="passwordUserName" name="userName" type="text" placeholder="yourUserName"
                          class="form-control " required="">
-                
                 </div>
               </div>
-              
               <!-- Password input-->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="passwordinput">Password Input</label>
                 <div class="col-md-4">
                   <input id="passwordinput" name="passwordinput" type="password" placeholder="placeholder"
                          class="form-control " required="">
-                
                 </div>
               </div>
-              
               <!-- Password input-->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="passwordinput">Password Input</label>
                 <div class="col-md-4">
                   <input id="passwordinputclone" name="passwordinput" type="password" placeholder="placeholder"
                          class="form-control ">
-                
                 </div>
               </div>
-            
-            
             </fieldset>
+            <div id="passwordError" class="invisible text-danger">Passwords must match!</div>
           </form>
         </div>
         <div class="modal-footer">
-          <button id="passwordFormSaveButton" type="button" class="btn btn-default invisible"
-                  onClick='doPasswordSave();'>Save
+          <button id="passwordSaveButton" type="button" class="btn btn-primary">Save
           </button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button id="passwordCancelButton" type="button" class="btn btn-secondary">Cancel
+          </button>
+
         </div>
       </div>
     </div>
