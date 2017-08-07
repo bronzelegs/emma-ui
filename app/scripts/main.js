@@ -69,29 +69,6 @@ var loginUserName = '';
 var loginPassword = '';
 var profileIsEditable = true;
 
-var defaultVersion = {
-  'version': {
-    'description': 'default api',
-    'major': '0',
-    'minor': '0',
-    'iteration': '0',
-    'release': 'a',
-    'timestamp': '01/01/2015.12:00'
-  }
-};
-
-function Version(ver) {
-  if (ver == undefined) {
-    ver = defaultVersion;
-  }
-  this.tag = ver['version'];
-  this.description = this.tag.description;
-  this.major = this.tag.major;
-  this.minor = this.tag.minor;
-  this.iteration = this.tag.iteration;
-  this.release = this.tag.release;
-  this.timestamp = this.tag.timestamp;
-}
 
 var personalityProfile = {
   'userName': 'emma-zero',
@@ -103,30 +80,6 @@ var personalityProfile = {
   'isABot': true
 };
 
-function Profile() {
-  this.userName = '';
-  this.firstName = '';
-  this.middleName = '';
-  this.lastName = '';
-  this.emai11 = '';
-  this.email2 = '';
-  this.about = '';
-  this.password = '';
-  this.isABot = false;
-}
-
-
-Profile.prototype.clone = function (profile) {
-  this.userName = profile.userName;
-  this.firstName = profile.firstName;
-  this.middleName = profile.middleName;
-  this.lastName = profile.lastName;
-  this.emai11 = profile.email1;
-  this.email2 = profile.email2;
-  this.about = profile.about;
-  this.password = profile.password;
-  this.isABot = profile.isABot;
-};
 
 var defaultProfile = {
   'userName': '',
@@ -139,6 +92,55 @@ var defaultProfile = {
   'password': '',
   'isABot': false
 };
+
+var Profile = function (profile = defaultProfile){
+  this.userName = profile.userName;
+  this.firstName = profile.firstName;
+  this.middleName = profile.middleName;
+  this.lastName = profile.lastName;
+  this.emai11 = profile.email1;
+  this.email2 = profile.email2;
+  this.about = profile.about;
+  this.password = profile.password;
+  this.isABot = profile.isABot;
+};
+
+Profile.prototype.getProfiles = function(data){
+  var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/';
+  
+  var jqxhr = $.getJSON(profilesctrl, function () {
+    })
+    .done(function (_data) {
+      console.log(_data);
+      data = _data.profile;
+      return true;
+    })
+    .fail(function () {
+      return false;
+    })
+    .always(function () {
+      console.log(_data);
+    });
+};
+
+Profile.prototype.getProfile = function(id) {
+  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
+  
+  var jqxhr = $.getJSON(profilectrl, function () {
+    })
+    .done(function (data) {
+      //update with this profile
+      this.clone(data.profile);
+      return true;
+    })
+    .fail(function () {
+      return false;
+    })
+    .always(function () {
+      console.log(data);
+    });
+};
+
 
 var activeProfile = defaultProfile;
 
@@ -157,18 +159,26 @@ Session.prototype.setPersonality = function (profile) {
   this._personality = profile;
 };
 
-function Version(ver) {
-  if (ver == undefined) {
-    ver = defaultVersion;
+var defaultVersion = {
+  'version': {
+    'description': 'default api',
+    'major': '0',
+    'minor': '0',
+    'iteration': '0',
+    'release': 'a',
+    'timestamp': '01/01/2015.12:00'
   }
-  this.tag = ver['version'];
-  this.description = this.tag.description;
-  this.major = this.tag.major;
-  this.minor = this.tag.minor;
-  this.iteration = this.tag.iteration;
-  this.release = this.tag.release;
-  this.timestamp = this.tag.timestamp;
+};
+
+function Version(ver = defaultVersion.version) {
+  this.description = ver.description;
+  this.major = ver.major;
+  this.minor = ver.minor;
+  this.iteration = ver.iteration;
+  this.release = ver.release;
+  this.timestamp = ver.timestamp;
 }
+
 
 Version.prototype.versionString = function () {
   return (this.major + '.' + this.minor + '.' + this.iteration + '.' + this.release);
@@ -193,7 +203,7 @@ Version.prototype.getVersion = function (url, version) {
       console.log(data);
       //alert(data);
       $('#awstest').text(JSON.stringify(data));
-      controlChanVer = new Version(data['response']);
+      controlChanVer = new Version(data['response'].version);
       updateVersionData();
     })
     .fail(function () {
@@ -208,7 +218,8 @@ Version.prototype.getVersion = function (url, version) {
 // utility functions
 
 function Versions() {
-  this.emmaVer = new Version(defaultVersion);
+  var _empty = new Version();
+  this.emmaVer = empty.clone(defaultVersion);
   this.controlChanVer = new Version(defaultVersion);
   this.grammarVer = new Version(defaultVersion);
   this.modelVer = new Version(defaultVersion);
@@ -257,9 +268,9 @@ function updateVersionData() {
 }
 
 function updateVersionSelector(selectorStub, version) {
-  $('#' + selectorStub + '-vers-desc').text('MindOfMan ' + version.about());
-  $('#' + selectorStub + '-vers-string').text(version.versionString());
-  $('#' + selectorStub + '-timestamp').text(version.timeStamp());
+  $('#' + selectorStub + '-vers-desc').text('MindOfMan ' + about());
+  $('#' + selectorStub + '-vers-string').text(versionString());
+  $('#' + selectorStub + '-timestamp').text(timeStamp());
 }
 
 function getEmmaVersion() {
@@ -268,14 +279,14 @@ function getEmmaVersion() {
   var jqxhr = $.getJSON(emmactrl, function () {
     })
     .done(function (data) {
-      console.log('version data' + data);
-      $('#awstest').text(JSON.stringify(data));
-      controlChanVer = new Version(data['response']);
+ 
+      controlChanVer = new Version(data.response.version);
       updateVersionData();
     })
     .fail(function () {
     })
-    .always(function () {
+    .always(function (data) {
+      console.log('version data' + data);
     });
 }
 
@@ -284,7 +295,7 @@ function getVersion(url, version, selector) {
     })
     .done(function (data) {
       console.log('version data' + data);
-      version = new Version(data['response']);
+      version = new Version(data.response.version);
       updateVersionSelector(selector);
     })
     .fail(function () {
@@ -338,16 +349,15 @@ var resetHeaderState = debounce(function () {
 }, 5000);
 
 
-
-var emmaVer = new Version(defaultVersion);
-var controlChanVer = new Version(defaultVersion);
-var grammarVer = new Version(defaultVersion);
-var modelVer = new Version(defaultVersion);
-var reactiveVer = new Version(defaultVersion);
-var ontologyVer = new Version(defaultVersion);
-var uiVer = new Version(defaultVersion);
-var cloudVer = new Version(defaultVersion);
-var tmmVer = new Version(defaultVersion);
+var emmaVer = new Version();
+var controlChanVer = new Version();
+var grammarVer = new Version();
+var modelVer = new Version();
+var reactiveVer = new Version();
+var ontologyVer = new Version();
+var uiVer = new Version();
+var cloudVer = new Version();
+var tmmVer = new Version();
 
 
 function getProfiles() {
@@ -357,9 +367,6 @@ function getProfiles() {
     })
     .done(function (data) {
       console.log(data);
-      $('#awstest').text(JSON.stringify(data));
-      controlChanVer = new Version(data['response']);
-      updateVersionData();
     })
     .fail(function () {
     })
@@ -428,7 +435,7 @@ function OnPasswordEdit(profile) {
 }
 
 function setModalData(profile) {
-  var _userName =profile.userName == '' ? 'new user' : profile.userName;
+  var _userName = profile.userName == '' ? 'new user' : profile.userName;
   $('#profile-title').text('Profile of ' + _userName);
   $('#userName').val(profile.userName);
   $('#firstName').val(profile.firstName);
@@ -475,25 +482,25 @@ function OnCreateAccount() {
   var passwordPromise = OnPasswordModal(newProfile);
   
   passwordPromise.then(function (retVal) {
-    console.log('ret from password ' + retVal);
-    if (retVal){
-      console.log(newProfile);
-    }
-  })
-  .then ( function(retVal) {
-    var profilePromise = OnProfileModal(newProfile);
-    profilePromise.then(function (retVal) {
-      console.log('ret from profile ' + retVal);
-      
+      console.log('ret from password ' + retVal);
+      if (retVal) {
+        console.log(newProfile);
+      }
+    })
+    .then(function (retVal) {
+      var profilePromise = OnProfileModal(newProfile);
+      profilePromise.then(function (retVal) {
+        console.log('ret from profile ' + retVal);
+        
+      });
     });
-  });
 }
 
 
 function OnProfileModal(profile) {
   var dfd = jQuery.Deferred();
   
-  var $profileForm =  $('#profileForm :input');
+  var $profileForm = $('#profileForm :input');
   var $profileDlg = $('#profileModal');
   var $profileSaveButton = $('#profileSaveButton');
   var $profileCloseButton = $('#profileCloseButton');
@@ -515,10 +522,10 @@ function OnProfileModal(profile) {
   
   $profileError.addClass('invisible');
   $profileDlg.modal('show');
-
+  
   $profileSaveButton.off('click').click(function () {
     // at least first name and email
-    if (($profileFirstName.val().length) && ($profileEmail.val().length)){
+    if (($profileFirstName.val().length) && ($profileEmail.val().length)) {
       dfd.resolve(true);
       $profileDlg.modal('hide');
       return true;
@@ -540,24 +547,31 @@ function OnPasswordModal(profile) {
   var $passwordError = $('#passwordError');
   var $passwordSaveButton = $('#passwordSaveButton');
   var $passwordCancelButton = $('#passwordCancelButton');
-  var $passwordUserName= $('#passwordUserName');
-  var $passwordinput= $('#passwordinput');
+  var $passwordUserName = $('#passwordUserName');
+  var $passwordinput = $('#passwordinput');
   var $passwordinputclone = $('#passwordinputclone');
+  
+  var _newUserName = '';
   
   $passwordError.addClass('invisible');
   $passwordDlg.modal('show');
   
   $passwordSaveButton.off('click').click(function () {
-    var pw1 = $passwordinput.val();
-    var pw2 = $passwordinputclone.val();
-    if (pw1 === pw2) {
-      profile.userName = $passwordUserName.val();
-      profile.password = pw1;
-      dfd.resolve(true);
-      $passwordDlg.modal('hide');
-      return true;
+    _newUserName = $passwordUserName.val();
+    if (!newUserExists(_newUserName)) {
+      var pw1 = $passwordinput.val();
+      var pw2 = $passwordinputclone.val();
+      if (pw1 === pw2) {
+        profile.userName = _newUserName;
+        profile.password = pw1;
+        dfd.resolve(true);
+        $passwordDlg.modal('hide');
+        return true;
+      } else {
+        $passwordError.removeClass('invisible');
+      }
     } else {
-      $passwordError.removeClass('invisible');
+
     }
   });
   
@@ -569,6 +583,41 @@ function OnPasswordModal(profile) {
   return dfd.promise();
 }
 
+
+function newUserExists(userName) {
+  // check to see if the profile exists
+  var profileExists = getProfilePromise(userName);
+  
+  profileExists
+    .done(function (data) {
+      console.log(data);
+    })
+    .fail( function () {
+      console.log('failed')
+      return false;
+    });
+  return true;
+}
+
+
+function getProfilePromise(id) {
+  var dfd = jQuery.Deferred();
+  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
+  var jqxhr = $.getJSON(profilectrl, function () {
+    })
+    .done(function (data) {
+      console.log(data);
+      dfd.resolve(data);
+      return true;
+    })
+    .fail(function (data) {
+      dfd.reject(data);
+      return false;
+    })
+    .always(function () {
+    });
+  return dfd.promise();
+}
 
 /*
  <a href="#" class="text-muted">Muted link</a>
