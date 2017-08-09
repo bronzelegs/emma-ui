@@ -93,19 +93,19 @@ var defaultProfile = {
   'isABot': false
 };
 
-var Profile = function (profile = defaultProfile){
+var Profile = function (profile = defaultProfile) {
   this.userName = profile.userName;
   this.firstName = profile.firstName;
   this.middleName = profile.middleName;
   this.lastName = profile.lastName;
-  this.emai11 = profile.email1;
+  this.email1 = profile.email1;
   this.email2 = profile.email2;
   this.about = profile.about;
   this.password = profile.password;
   this.isABot = profile.isABot;
 };
 
-Profile.prototype.getProfiles = function(data){
+Profile.prototype.getProfiles = function (data) {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/';
   
   var jqxhr = $.getJSON(profilesctrl, function () {
@@ -123,7 +123,7 @@ Profile.prototype.getProfiles = function(data){
     });
 };
 
-Profile.prototype.getProfile = function(id) {
+Profile.prototype.getProfile = function (id) {
   var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
   
   var jqxhr = $.getJSON(profilectrl, function () {
@@ -279,7 +279,7 @@ function getEmmaVersion() {
   var jqxhr = $.getJSON(emmactrl, function () {
     })
     .done(function (data) {
- 
+      
       controlChanVer = new Version(data.response.version);
       updateVersionData();
     })
@@ -491,7 +491,8 @@ function OnCreateAccount() {
       var profilePromise = OnProfileModal(newProfile);
       profilePromise.then(function (retVal) {
         console.log('ret from profile ' + retVal);
-        
+        getModalData(newProfile);
+        addProfile(newProfile);
       });
     });
 }
@@ -545,24 +546,29 @@ function OnPasswordModal(profile) {
   var dfd = jQuery.Deferred();
   var $passwordDlg = $('#passwordModal');
   var $passwordError = $('#passwordError');
+  var $userExists = $('#userExists');
   var $passwordSaveButton = $('#passwordSaveButton');
   var $passwordCancelButton = $('#passwordCancelButton');
   var $passwordUserName = $('#passwordUserName');
   var $passwordinput = $('#passwordinput');
   var $passwordinputclone = $('#passwordinputclone');
   
-  var _newUserName = '';
+  var newUserName = '';
+  var userExists = false;
   
   $passwordError.addClass('invisible');
+  $userExists.addClass('invisible');
   $passwordDlg.modal('show');
   
   $passwordSaveButton.off('click').click(function () {
-    _newUserName = $passwordUserName.val();
-    if (!newUserExists(_newUserName)) {
+    newUserName = $passwordUserName.val();
+    userExists = newUserExists(newUserName);
+    
+    if (!userExists) {
       var pw1 = $passwordinput.val();
       var pw2 = $passwordinputclone.val();
       if (pw1 === pw2) {
-        profile.userName = _newUserName;
+        profile.userName = newUserName;
         profile.password = pw1;
         dfd.resolve(true);
         $passwordDlg.modal('hide');
@@ -571,7 +577,7 @@ function OnPasswordModal(profile) {
         $passwordError.removeClass('invisible');
       }
     } else {
-
+      $userExists.removeClass('invisible');
     }
   });
   
@@ -586,21 +592,19 @@ function OnPasswordModal(profile) {
 
 function newUserExists(userName) {
   // check to see if the profile exists
-  var profileExists = getProfilePromise(userName);
-  
-  profileExists
+  getProfileById(userName)
     .done(function (data) {
       console.log(data);
+      return (data.profile != null);
     })
-    .fail( function () {
+    .fail(function () {
       console.log('failed')
       return false;
     });
-  return true;
 }
 
 
-function getProfilePromise(id) {
+function getProfileById(id) {
   var dfd = jQuery.Deferred();
   var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
   var jqxhr = $.getJSON(profilectrl, function () {
@@ -617,6 +621,29 @@ function getProfilePromise(id) {
     .always(function () {
     });
   return dfd.promise();
+}
+
+function addProfile(profile) {
+  
+  console.log(profile);
+  var tmmapi = 'http://api.bronzelegs.com:3100/profiles';
+  var jqxhr = $.ajax({
+      url: tmmapi,
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(profile)
+    })
+    .done(function (data) {
+      console.log('data now is' + data);
+      return true;
+    })
+    .fail(function () {
+      return false;
+    })
+    .always(function (data) {
+      console.log('data sent was ' + data);
+    });
 }
 
 /*
