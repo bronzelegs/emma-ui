@@ -120,9 +120,9 @@
               </div>
               <!-- Text input-->
               <div class="form-group">
-                <label class="col-md-4 control-label" for="loginUserName">User (email)</label>
+                <label class="col-md-4 control-label" for="loginUserName">User name (not email)</label>
                 <div class="col-md-4">
-                  <input id="loginUserName" name="userNameText" type="text" placeholder="me@google.com"
+                  <input id="loginUserName" name="userNameText" type="text" placeholder="whome"
                          class="form-control " required="">
                 </div>
               </div>
@@ -422,7 +422,7 @@
         <div class="modal-header myBlue">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
             aria-hidden="true">&times;</span></button>
-          <h4 id='password-edit-title' class="modal-title" id="passwordModalLabel">Profile of</h4></div>
+          <h4 id='password-edit-title' class="modal-title" id="passwordModalLabel">Profile of  <span id="passwordModalName"></span></h4></div>
         <div class="modal-body">
           <form id="passwordForm" class="form-horizontal">
             <fieldset>
@@ -451,7 +451,7 @@
                 </div>
               </div>
             </fieldset>
-            <div id="passwordError" class="invisible text-danger">Passwords must match!</div>
+            <div id="passwordError" class="invisible text-danger">Passwords must match and be longer than 8 and shorter than 16 characters</div>
             <div id="userExists" class="invisible text-danger">That username is taken!</div>
           </form>
         </div>

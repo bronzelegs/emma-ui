@@ -82,7 +82,7 @@ var personalityProfile = {
 
 
 var defaultProfile = {
-  'userName': '',
+  'userName': 'new user',
   'firstName': '',
   'middleName': '',
   'lastName': '',
@@ -95,6 +95,7 @@ var defaultProfile = {
 
 var Profile = function (profile = defaultProfile) {
   this.userName = profile.userName;
+  this.avatarImage = 'images/defaultAvatarImage.png';
   this.firstName = profile.firstName;
   this.middleName = profile.middleName;
   this.lastName = profile.lastName;
@@ -142,14 +143,17 @@ Profile.prototype.getProfile = function (id) {
 };
 
 
-var activeProfile = defaultProfile;
-
 function Session() {
   this._activeUser = '';
   this._personality = '';
   this.connected = false;
 }
 
+function setActiveProfile( profile){
+  activeProfile = profile;
+}
+
+var activeProfile = defaultProfile;
 
 Session.prototype.setActiveUser = function (profile) {
   this._activeUser = profile;
@@ -381,7 +385,7 @@ function getProfile(id) {
     })
     .done(function (data) {
       console.log(data);
-      updateActiveProfile(data);
+      //setActiveProfile(data);
     })
     .fail(function () {
     })
@@ -407,8 +411,8 @@ function updateProfiles(id, profile) {
     });
 }
 
-function updateActiveProfile(data) {
-  activeProfile = data.profile;
+function setActiveProfile(profile) {
+  activeProfile = profile;
 }
 
 function OnProfileEdit(profile) {
@@ -493,6 +497,8 @@ function OnCreateAccount() {
         console.log('ret from profile ' + retVal);
         getModalData(newProfile);
         addProfile(newProfile);
+        setActiveProfile(newProfile);
+        postLoginInit();
       });
     });
 }
@@ -550,15 +556,18 @@ function OnPasswordModal(profile) {
   var $passwordSaveButton = $('#passwordSaveButton');
   var $passwordCancelButton = $('#passwordCancelButton');
   var $passwordUserName = $('#passwordUserName');
+  var $passwordModalName = $('#passwordModalName');
   var $passwordinput = $('#passwordinput');
   var $passwordinputclone = $('#passwordinputclone');
   
-  var newUserName = '';
+  var newUserName = profile.userName;
   var userExists = false;
   
   $passwordError.addClass('invisible');
   $userExists.addClass('invisible');
+  $passwordModalName.text(newUserName);
   $passwordDlg.modal('show');
+  
   
   $passwordSaveButton.off('click').click(function () {
     newUserName = $passwordUserName.val();
@@ -567,7 +576,7 @@ function OnPasswordModal(profile) {
     if (!userExists) {
       var pw1 = $passwordinput.val();
       var pw2 = $passwordinputclone.val();
-      if (pw1 === pw2) {
+      if (passwordCheck(pw1, pw2)) {
         profile.userName = newUserName;
         profile.password = pw1;
         dfd.resolve(true);
@@ -589,6 +598,9 @@ function OnPasswordModal(profile) {
   return dfd.promise();
 }
 
+function passwordCheck(pw1, pw2) {
+  return ((pw1 === pw2) && (pw1.length > 8) && (pw1.length < 16) )
+}
 
 function newUserExists(userName) {
   // check to see if the profile exists
@@ -603,6 +615,30 @@ function newUserExists(userName) {
     });
 }
 
+function doLoginVerification(user, pw) {
+  var profile = {'user': '', 'password': ''};
+  profile.user = user;
+  profile.password = pw;
+  
+  var tmmapi = 'http://localhost:3000/login/';
+  var jqxhr = $.ajax({
+      url: tmmapi,
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(profile)
+    })
+    .done(function (data) {
+      console.log('data now is' + data);
+      return true;
+    })
+    .fail(function () {
+      return false;
+    })
+    .always(function (data) {
+      console.log('data sent was ' + data);
+    });
+}
 
 function getProfileById(id) {
   var dfd = jQuery.Deferred();
@@ -635,14 +671,14 @@ function addProfile(profile) {
       data: JSON.stringify(profile)
     })
     .done(function (data) {
-      console.log('data now is' + data);
+      console.log('data now is' + JSON.stringify(data));
       return true;
     })
     .fail(function () {
       return false;
     })
     .always(function (data) {
-      console.log('data sent was ' + data);
+      console.log('data sent was ' +  JSON.stringify(data));
     });
 }
 
@@ -728,6 +764,12 @@ function init() {
       $('#passwordSaveButton').removeClass('invisible');
     }
   });
+}
+
+function changeUser(profile)
+{
+  setActiveProfile(profile);
+  
 }
 
 function postLoginInit() {
