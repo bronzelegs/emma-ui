@@ -72,6 +72,7 @@ var profileIsEditable = true;
 
 var personalityProfile = {
   'userName': 'emma-zero',
+  'image': 'images/lg-animated.gif',
   'firstName': 'Emma',
   'middleName': 'Lemon',
   'lastName': 'Peel',
@@ -83,6 +84,7 @@ var personalityProfile = {
 
 var defaultProfile = {
   'userName': 'new user',
+  'image': '',
   'firstName': '',
   'middleName': '',
   'lastName': '',
@@ -95,7 +97,7 @@ var defaultProfile = {
 
 var Profile = function (profile = defaultProfile) {
   this.userName = profile.userName;
-  this.avatarImage = 'images/defaultAvatarImage.png';
+  this.image = 'images/defaultAvatarImage.png';
   this.firstName = profile.firstName;
   this.middleName = profile.middleName;
   this.lastName = profile.lastName;
@@ -497,7 +499,7 @@ function OnCreateAccount() {
         console.log('ret from profile ' + retVal);
         getModalData(newProfile);
         addProfile(newProfile);
-        setActiveProfile(newProfile);
+        changeUser(newProfile);
         postLoginInit();
       });
     });
@@ -769,6 +771,7 @@ function init() {
 function changeUser(profile)
 {
   setActiveProfile(profile);
+  $('#profileImage').attr('src',profile.image);
   
 }
 
