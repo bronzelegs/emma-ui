@@ -65,10 +65,6 @@ function receiveMsg(s) {
 
 //classes
 
-var loginUserName = '';
-var loginPassword = '';
-var profileIsEditable = true;
-
 
 var personalityProfile = {
   'userName': 'emma-zero',
@@ -498,7 +494,9 @@ function OnCreateAccount() {
     });
 }
 
-
+function updateProfile(){
+  alert('we arent there yet');
+}
 function OnProfileModal(profile) {
   var dfd = jQuery.Deferred();
   
@@ -510,16 +508,12 @@ function OnProfileModal(profile) {
   var $profileFirstName = $('#firstName');
   var $profileEmail = $('#email1');
   
-  $profileError.addClass('invisible');
-  $profileForm.prop('disabled', true);
-  $profileSaveButton.addClass('invisible');
-  $profileSaveButton.prop('disabled', true);
   
   setModalData(profile);
   
-  if (profile.isABot == false) {
-    $profileForm.prop('disabled', false);
-  }
+  $profileSaveButton.removeClass('invisible');
+  $profileSaveButton.prop('disabled', false);
+  
   
   $profileError.addClass('invisible');
   $profileDlg.modal('show');
@@ -624,6 +618,11 @@ function OnLogin() {
     ServerLogin(loginUserName, loginPassword)
       .done(function (data) {
         console.log(data);
+        getProfileById(loginUserName)
+          .done(function (data) {
+            console.log(JSON.stringify(data));
+            changeUser(data.profile);
+          });
         postLoginInit();
         return true;
       })
@@ -635,13 +634,29 @@ function OnLogin() {
   }
 }
 
+function getProfileById(id) {
+  var dfd = jQuery.Deferred();
+  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
+  var jqxhr = $.getJSON(profilectrl, function () {
+    })
+    .done(function (data) {
+      console.log('data now is' + JSON.stringify(data));
+      dfd.resolve(data);
+      return true;
+    })
+    .fail(function (data) {
+      dfd.reject(data);
+      return false;
+    });
+  return dfd.promise();
+}
 
 function ServerLogin(user, password) {
   var dfd = jQuery.Deferred();
   var credentials = {'user': '', 'password': ''};
   credentials.user = user;
   credentials.password = password;
-  var tmmapi = 'http://localhost:3100/login/';
+  var tmmapi = 'http://api.bronzelegs.com:3100/login/';
   var jqxhr = $.ajax({
       url: tmmapi,
       type: 'POST',
@@ -659,30 +674,11 @@ function ServerLogin(user, password) {
         return false;
       }
     })
-    .fail(function () {
+    .fail(function (data) {
       dfd.reject(data);
       return false;
     });
   return dfd.promise();
-}
-
-function getProfileById(id) {
-  var dfd = jQuery.Deferred();
-  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
-  var jqxhr = $.getJSON(profilectrl, function () {
-    })
-    .done(function (data) {
-      console.log(data);
-      dfd.resolve(data);
-      return true;
-    })
-    .fail(function (data) {
-      dfd.reject(data);
-      return false;
-    })
-    .always(function () {
-    });
-  return dfd.promise;
 }
 
 function addProfile(profile) {
