@@ -138,10 +138,14 @@
               <div class="form-group">
                 <label class="col-md-4 control-label" for="Login">Login</label>
                 <div class="col-md-4">
-                  <button type='button' d="loginButton" name="Login" class="btn btn-success" onClick='doLogin();'>
+                  <button type='button' d="loginButton" name="Login" class="btn btn-success" onClick='OnLogin();'>
                     Login
                   </button>
                 </div>
+              </div>
+              <div>
+                <span id="loginError" class="invisible text-danger" >Please specify a user name and a password.</span>
+                <span id="loginFailed" class="invisible text-danger">That user name and password failed.</span>
               </div>
             </fieldset>
           </form>
@@ -204,7 +208,7 @@
               Conversation
               </span>
             </div>
-            <div id="myConversation" class="myConversationDiv panel-body  scrollable-panel"></div>
+            <div id="myConversation" class="myConversationDiv panel-body scrollable-panel"></div>
           </div>
         </div>
         <div class="col-sm-2">
@@ -408,7 +412,7 @@
         </div>
         <div class="modal-footer">
           <button id="profileSaveButton" type="button" class="btn btn-default invisible secondary" disabled=true>Save</button>
-          <button id="profileCloseButton" type="button" class="btn btn-primary" >Close</button>
+          <button id="profileCloseButton" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>

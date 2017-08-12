@@ -151,7 +151,7 @@ function Session() {
   this.connected = false;
 }
 
-function setActiveProfile( profile){
+function setActiveProfile(profile) {
   activeProfile = profile;
 }
 
@@ -413,19 +413,28 @@ function updateProfiles(id, profile) {
     });
 }
 
+
 function setActiveProfile(profile) {
   activeProfile = profile;
 }
 
 function OnProfileEdit(profile) {
   setModalData(profile);
-  $('#profileForm :input').prop('disabled', true);
-  $('#profileFormSaveButton').addClass('invisible');
-  $('#profileFormSaveButton').prop('disabled', true);
-  profileIsEditable = (typeof profile.isABot === 'undefined');
-  if (profileIsEditable) {
-    $('#profileForm :input').prop('disabled', false);
+  var $profileFormInput = $('#profileForm :input');
+  var $profileSaveButton = $('#profileSaveButton');
+  
+  if (profile.isABot) {
+    $profileFormInput.prop('disabled', true);
+    $profileSaveButton.addClass('invisible');
+    $profileSaveButton.prop('disabled', true);
+  } else {
+    $profileFormInput.prop('disabled', false);
+    $profileSaveButton.removeClass('invisible');
   }
+  
+  $profileFormInput.bind('change keyup', function () {
+    $profileSaveButton.prop('disabled', false);
+  });
   
   $('#profileModal').modal()
 }
@@ -452,13 +461,6 @@ function setModalData(profile) {
   $('#about').val(profile.about);
 }
 
-function doLogin() {
-  loginUserName = $('#loginUserName').val();
-  loginPassword = $('#loginPassword').val();
-  console.log(loginUserName + ' ' + loginPassword);
-  postLoginInit();
-  return false;
-}
 
 function getModalData(profile) {
   profile.userName = $('#userName').val().trim();
@@ -471,15 +473,6 @@ function getModalData(profile) {
   return profile;
 }
 
-function doProfileSave() {
-  getModalData(activeProfile);
-  if (updateProfiles(activeProfile.userName, activeProfile)) {
-    
-  } else {
-    
-  }
-  
-}
 
 function OnCreateAccount() {
   var newProfile = new Profile();
@@ -524,8 +517,7 @@ function OnProfileModal(profile) {
   
   setModalData(profile);
   
-  profileIsEditable = (profile.isABot === false);
-  if (profileIsEditable) {
+  if (profile.isABot == false) {
     $profileForm.prop('disabled', false);
   }
   
@@ -617,29 +609,61 @@ function newUserExists(userName) {
     });
 }
 
-function doLoginVerification(user, pw) {
-  var profile = {'user': '', 'password': ''};
-  profile.user = user;
-  profile.password = pw;
-  
-  var tmmapi = 'http://localhost:3000/login/';
+
+function OnLogin() {
+  var $loginError = $('#loginError');
+  var $loginFailed = $('#loginFailed');
+  $loginFailed.addClass('invisible');
+  $loginError.addClass('invisible');
+  var loginUserName = $('#loginUserName').val();
+  var loginPassword = $('#loginPassword').val();
+  if ((loginUserName.length < 1) || (loginPassword.length < 1)) {
+    $loginError.removeClass('invisible');
+  } else {
+    console.log(loginUserName + ' ' + loginPassword);
+    ServerLogin(loginUserName, loginPassword)
+      .done(function (data) {
+        console.log(data);
+        postLoginInit();
+        return true;
+      })
+      .fail(function () {
+        console.log('failed');
+        $loginFailed.removeClass('invisible');
+        return false;
+      });
+  }
+}
+
+
+function ServerLogin(user, password) {
+  var dfd = jQuery.Deferred();
+  var credentials = {'user': '', 'password': ''};
+  credentials.user = user;
+  credentials.password = password;
+  var tmmapi = 'http://localhost:3100/login/';
   var jqxhr = $.ajax({
       url: tmmapi,
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
-      data: JSON.stringify(profile)
+      data: JSON.stringify(credentials)
     })
     .done(function (data) {
-      console.log('data now is' + data);
-      return true;
+      console.log('data now is' + JSON.stringify(data));
+      if (data.response == 'ok') {
+        dfd.resolve(data);
+        return true;
+      } else {
+        dfd.reject(data);
+        return false;
+      }
     })
     .fail(function () {
+      dfd.reject(data);
       return false;
-    })
-    .always(function (data) {
-      console.log('data sent was ' + data);
     });
+  return dfd.promise();
 }
 
 function getProfileById(id) {
@@ -658,7 +682,7 @@ function getProfileById(id) {
     })
     .always(function () {
     });
-  return dfd.promise();
+  return dfd.promise;
 }
 
 function addProfile(profile) {
@@ -680,7 +704,7 @@ function addProfile(profile) {
       return false;
     })
     .always(function (data) {
-      console.log('data sent was ' +  JSON.stringify(data));
+      console.log('data sent was ' + JSON.stringify(data));
     });
 }
 
@@ -752,26 +776,11 @@ function init() {
   $('#messagePanel').fadeToggle('slow');
   $('#dataPanel').fadeToggle('slow');
   
-  var $profileSaveButton = $('#profileSaveButton');
-  $('#profileForm').bind('change keyup', function () {
-    if (profileIsEditable) {
-      $profileSaveButton.removeClass('invisible');
-      $('#profileForm').prop('disabled', false);
-      $profileSaveButton.prop('disabled', false);
-    }
-  });
-  
-  $('#passwordForm').bind('change keyup', function () {
-    if (profileIsEditable) {
-      $('#passwordSaveButton').removeClass('invisible');
-    }
-  });
 }
 
-function changeUser(profile)
-{
+function changeUser(profile) {
   setActiveProfile(profile);
-  $('#profileImage').attr('src',profile.image);
+  $('#profileImage').attr('src', profile.image);
   
 }
 
