@@ -65,7 +65,6 @@ function receiveMsg(s) {
 
 //classes
 
-
 var personalityProfile = {
   'userName': 'emma-zero',
   'image': 'images/lg-animated.gif',
@@ -77,10 +76,9 @@ var personalityProfile = {
   'isABot': true
 };
 
-
 var defaultProfile = {
   'userName': 'new user',
-  'image': '',
+  'image': 'images/defaultAvatarImage.png',
   'firstName': '',
   'middleName': '',
   'lastName': '',
@@ -91,9 +89,9 @@ var defaultProfile = {
   'isABot': false
 };
 
-var Profile = function (profile = defaultProfile) {
+function Profile(profile = defaultProfile) {
   this.userName = profile.userName;
-  this.image = 'images/defaultAvatarImage.png';
+  this.image = profile.image;
   this.firstName = profile.firstName;
   this.middleName = profile.middleName;
   this.lastName = profile.lastName;
@@ -104,41 +102,61 @@ var Profile = function (profile = defaultProfile) {
   this.isABot = profile.isABot;
 };
 
-Profile.prototype.getProfiles = function (data) {
-  var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/';
-  
-  var jqxhr = $.getJSON(profilesctrl, function () {
-    })
-    .done(function (_data) {
-      console.log(_data);
-      data = _data.profile;
-      return true;
-    })
-    .fail(function () {
-      return false;
-    })
-    .always(function () {
-      console.log(_data);
-    });
-};
+Profile.prototype.copy = function(profile) {
+  this.userName = profile.userName;
+  this.image = profile.image;
+  this.firstName = profile.firstName;
+  this.middleName = profile.middleName;
+  this.lastName = profile.lastName;
+  this.email1 = profile.email1;
+  this.email2 = profile.email2;
+  this.about = profile.about;
+  this.password = profile.password;
+  this.isABot = profile.isABot;
+}
 
-Profile.prototype.getProfile = function (id) {
-  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
-  
+Profile.prototype.getProfile = function (userName = this.userName) {
+  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + userName.trim();
+  var that = this;
   var jqxhr = $.getJSON(profilectrl, function () {
     })
     .done(function (data) {
       //update with this profile
-      this.clone(data.profile);
+      that.copy(data.profile);
       return true;
     })
     .fail(function () {
       return false;
     })
-    .always(function () {
-      console.log(data);
+    .always(function (data) {
+      console.log(JSON.stringify(data));
     });
 };
+
+
+Profile.prototype.updateProfile = function () {
+  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + this.userName.trim();
+  var that = this;
+  var p = JSON.stringify(this);
+  $.ajax({
+    url: profilectrl,
+    type: 'PUT',
+    dataType: 'json',
+    contentType: 'application/json',
+    data: p
+    })
+    .done(function (data) {
+      console.log(data);
+      return true;
+    })
+    .fail(function () {
+      console.log('failed?');
+      return false;
+    })
+    .always(function (data) {
+      console.log(JSON.stringify(data));
+    });
+}
 
 
 function Session() {
@@ -196,7 +214,7 @@ Version.prototype.about = function () {
 
 Version.prototype.getVersion = function (url, version) {
   var _url = (url === undefined) ? 'http://api.bronzelegs.com:3000/emma/version' : url;
-  
+
   var jqxhr = $.getJSON(emmactrl, function () {
       //alert('success');
     })
@@ -233,37 +251,37 @@ function Versions() {
 }
 
 function updateVersionData() {
-  
+
   $('#emmaVer').text(emmaVer.about() + ' ' + emmaVer.versionString() + ' ' + emmaVer.timeStamp());
-  
+
   $('#ctrl-chan-vers-desc').text(controlChanVer.about());
   $('#ctrl-chan-vers-string').text(controlChanVer.versionString());
   $('#ctrl-chan-timestamp').text(controlChanVer.timeStamp());
-  
+
   $('#grammar-vers-desc').text('grammar ' + grammarVer.about());
   $('#grammar-vers-string').text(grammarVer.versionString());
   $('#grammar-timestamp').text(grammarVer.timeStamp());
-  
+
   $('#model-vers-desc').text('model ' + modelVer.about());
   $('#model-vers-string').text(modelVer.versionString());
   $('#model-timestamp').text(modelVer.timeStamp());
-  
+
   $('#reactive-vers-desc').text('reactive ' + reactiveVer.about());
   $('#reactive-vers-string').text(reactiveVer.versionString());
   $('#reactive-timestamp').text(reactiveVer.timeStamp());
-  
+
   $('#ontology-vers-desc').text('ontology ' + ontologyVer.about());
   $('#ontology-vers-string').text(ontologyVer.versionString());
   $('#ontology-timestamp').text(ontologyVer.timeStamp());
-  
+
   $('#ui-vers-desc').text('UI ' + uiVer.about());
   $('#ui-vers-string').text(uiVer.versionString());
   $('#ui-timestamp').text(uiVer.timeStamp());
-  
+
   $('#cloud-vers-desc').text('cloud ' + cloudVer.about());
   $('#cloud-vers-string').text(cloudVer.versionString());
   $('#cloud-timestamp').text(cloudVer.timeStamp());
-  
+
   $('#tmm-vers-desc').text('MindOfMan ' + tmmVer.about());
   $('#tmm-vers-string').text(tmmVer.versionString());
   $('#tmm-timestamp').text(tmmVer.timeStamp());
@@ -277,11 +295,11 @@ function updateVersionSelector(selectorStub, version) {
 
 function getEmmaVersion() {
   var emmactrl = 'http://api.bronzelegs.com:3000/emma/version';
-  
+
   var jqxhr = $.getJSON(emmactrl, function () {
     })
     .done(function (data) {
-      
+
       controlChanVer = new Version(data.response.version);
       updateVersionData();
     })
@@ -364,7 +382,7 @@ var tmmVer = new Version();
 
 function getProfiles() {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/';
-  
+
   var jqxhr = $.getJSON(profilesctrl, function () {
     })
     .done(function (data) {
@@ -378,7 +396,7 @@ function getProfiles() {
 
 function getProfile(id) {
   var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
-  
+
   var jqxhr = $.getJSON(profilectrl, function () {
     })
     .done(function (data) {
@@ -391,9 +409,8 @@ function getProfile(id) {
     });
 }
 
-function updateProfiles(id, profile) {
+function updateProfile(id, profile) {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
-  
   $.ajax({
       url: profilesctrl, type: 'put', data: JSON.stringify(profile), headers: {}, dataType: 'json'
     })
@@ -418,7 +435,7 @@ function OnProfileEdit(profile) {
   setModalData(profile);
   var $profileFormInput = $('#profileForm :input');
   var $profileSaveButton = $('#profileSaveButton');
-  
+
   if (profile.isABot) {
     $profileFormInput.prop('disabled', true);
     $profileSaveButton.addClass('invisible');
@@ -427,11 +444,11 @@ function OnProfileEdit(profile) {
     $profileFormInput.prop('disabled', false);
     $profileSaveButton.removeClass('invisible');
   }
-  
+
   $profileFormInput.bind('change keyup', function () {
     $profileSaveButton.prop('disabled', false);
   });
-  
+
   $('#profileModal').modal()
 }
 
@@ -441,7 +458,7 @@ function OnPasswordEdit(profile) {
     alert('passed');
   }
   //$('#passwordEditModal').prop('disabled', true);
-  
+
   $('#passwordModal').modal();
 }
 
@@ -457,7 +474,6 @@ function setModalData(profile) {
   $('#about').val(profile.about);
 }
 
-
 function getModalData(profile) {
   profile.userName = $('#userName').val().trim();
   profile.firstName = $('#firstName').val().trim();
@@ -469,13 +485,12 @@ function getModalData(profile) {
   return profile;
 }
 
-
 function OnCreateAccount() {
   var newProfile = new Profile();
   var retVal = false;
-  
+
   var passwordPromise = OnPasswordModal(newProfile);
-  
+
   passwordPromise.then(function (retVal) {
       console.log('ret from password ' + retVal);
       if (retVal) {
@@ -499,7 +514,7 @@ function updateProfile() {
 }
 function OnProfileModal(profile) {
   var dfd = jQuery.Deferred();
-  
+
   var $profileForm = $('#profileForm :input');
   var $profileDlg = $('#profileModal');
   var $profileSaveButton = $('#profileSaveButton');
@@ -507,15 +522,15 @@ function OnProfileModal(profile) {
   var $profileError = $('#profileError');
   var $profileFirstName = $('#firstName');
   var $profileEmail = $('#email1');
-  
+
   setModalData(profile);
-  
+
   $profileSaveButton.removeClass('invisible');
   $profileSaveButton.prop('disabled', false);
-  
+
   $profileError.addClass('invisible');
   $profileDlg.modal('show');
-  
+
   $profileSaveButton.off('click').click(function () {
     // at least first name and email
     if (($profileFirstName.val().length) && ($profileEmail.val().length)) {
@@ -545,20 +560,19 @@ function OnPasswordModal(profile) {
   var $passwordModalName = $('#passwordModalName');
   var $passwordinput = $('#passwordinput');
   var $passwordinputclone = $('#passwordinputclone');
-  
+
   var newUserName = profile.userName;
   var userExists = false;
-  
+
   $passwordError.addClass('invisible');
   $userExists.addClass('invisible');
   $passwordModalName.text(newUserName);
   $passwordDlg.modal('show');
-  
-  
+
   $passwordSaveButton.off('click').click(function () {
     newUserName = $passwordUserName.val();
     userExists = OnNewUserExists(newUserName);
-    
+
     if (!userExists) {
       var pw1 = $passwordinput.val();
       var pw2 = $passwordinputclone.val();
@@ -575,7 +589,7 @@ function OnPasswordModal(profile) {
       $userExists.removeClass('invisible');
     }
   });
-  
+
   $passwordCancelButton.off('click').click(function () {
     $passwordDlg.modal('hide');
     dfd.reject(false);
@@ -600,7 +614,6 @@ function OnNewUserExists(userName) {
       return false;
     });
 }
-
 
 function OnLogin() {
   var $loginError = $('#loginError');
@@ -681,7 +694,7 @@ function OnServerLogin(user, password) {
 
 function OnAddProfile(profile) {
   var dfd = JQuery.Deferred();
-  
+
   console.log(profile);
   var tmmapi = 'http://api.bronzelegs.com:3100/profiles';
   var jqxhr = $.ajax({
@@ -711,9 +724,8 @@ function OnAddProfile(profile) {
  <a href="#" class="text-info">Info link</a>
  <a href="#" class="text-warning">Warning link</a>
  <a href="#" class="text-danger">Danger link</a>
- 
- */
 
+ */
 
 function OnErrorModal(title, text, desc) {
   var dfd= jQuery.Deferred();
@@ -751,8 +763,6 @@ function OnMsgModal(title, text, desc) {
   return dfd.promise;
 }
 
-
-
 function OnConfirmModal(title, msg, desc) {
   var dfd = jQuery.Deferred();
   var $confirmModal = $('#confirmModal');
@@ -787,9 +797,8 @@ function OnNewConfirmModal(title, message, desc) {
 }
 
 
-
 function doLogoutModal() {
-  doErrorModal('Je ne canna dunna', 'That code is not in my system right now', 'It probably will be soon')
+  OnErrorModal('Je ne canna dunna', 'That code is not in my system right now', 'It probably will be soon')
 }
 
 // start up
@@ -804,13 +813,13 @@ function init() {
   $('#informationPanel').fadeToggle('slow');
   $('#messagePanel').fadeToggle('slow');
   $('#dataPanel').fadeToggle('slow');
-  
+
 }
 
 function changeUser(profile) {
   setActiveProfile(profile);
   $('#profileImage').attr('src', profile.image);
-  
+
 }
 
 function postLoginInit() {
@@ -822,5 +831,4 @@ $(document).ready(function () {
   init();
   getProfile('tdavis0525');
   console.log('emma ready!');
-
 });
