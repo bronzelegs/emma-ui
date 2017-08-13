@@ -450,17 +450,21 @@ function getProfile(id) {
     });
 }
 
+function updateProfile(profile = activeProfile){
+  getModalData(profile);
+  OnUpdateProfile(profile);
+  var $profileModal = $('#profileModal');
+  $profileModal.modal('hide');
+}
 function OnUpdateProfile(profile = activeProfile) {
   var dfd = jQuery.Deferred();
   var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + profile.userName.trim();
-  var that = this;
-  var p = JSON.stringify(this);
   $.ajax({
       url: profilectrl,
       type: 'PUT',
       dataType: 'json',
       contentType: 'application/json',
-      data: p
+      data: JSON.stringify(profile)
     })
     .done(function (data) {
       if (data.profile != null){
@@ -481,7 +485,7 @@ function OnUpdateProfile(profile = activeProfile) {
   return dfd.promise();
 }
 
-function updateProfile(id, profile) {
+function UpdateProfile(id, profile) {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
   $.ajax({
       url: profilesctrl, type: 'put', data: JSON.stringify(profile), headers: {}, dataType: 'json'
