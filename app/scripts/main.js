@@ -122,10 +122,14 @@ Profile.prototype.getProfile = function (userName = this.userName) {
   var jqxhr = $.getJSON(profilectrl, function () {
     })
     .done(function (data) {
-      //update with this profile
-      that.copy(data.profile);
-      dfd.resolve(data);
-      return true;
+      if (data.profile != null){
+        that.copy(data.profile);
+        dfd.resolve(data);
+        return true;
+      } else {
+        dfd.reject(data);
+        return false;
+      }
     })
     .fail(function (error) {
       dfd.reject(error);
@@ -150,8 +154,13 @@ Profile.prototype.updateProfile = function (userName = this.userName) {
       data: p
     })
     .done(function (data) {
-      dfd.resolve(data);
-      return true;
+      if (data.profile != null){
+        dfd.resolve(data);
+        return true;
+      } else {
+        dfd.reject(data);
+        return false;
+      }
     })
     .fail(function (error) {
       dfd.reject(error)
@@ -174,8 +183,13 @@ Profile.prototype.addProfile = function(profile = this){
       data: JSON.stringify(profile)
     })
     .done(function (data) {
-      console.log('data now is' + JSON.stringify(data));
-      return true;
+      if (data.profile != null){
+        dfd.resolve(data);
+        return true;
+      } else {
+        dfd.reject(data);
+        return false;
+      }
     })
     .fail(function () {
       return false;
@@ -436,6 +450,37 @@ function getProfile(id) {
     });
 }
 
+function OnUpdateProfile(profile = activeProfile) {
+  var dfd = jQuery.Deferred();
+  var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + profile.userName.trim();
+  var that = this;
+  var p = JSON.stringify(this);
+  $.ajax({
+      url: profilectrl,
+      type: 'PUT',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: p
+    })
+    .done(function (data) {
+      if (data.profile != null){
+        dfd.resolve(data);
+        return true;
+      } else {
+        dfd.reject(data);
+        return false;
+      }
+    })
+    .fail(function (error) {
+      dfd.reject(error)
+      return false;
+    })
+    .always(function (data) {
+      console.log('updateProfile: ', JSON.stringify(data));
+    });
+  return dfd.promise();
+}
+
 function updateProfile(id, profile) {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
   $.ajax({
@@ -536,9 +581,7 @@ function OnCreateAccount() {
     });
 }
 
-function updateProfile() {
-  alert('we arent there yet');
-}
+
 function OnProfileModal(profile) {
   var dfd = jQuery.Deferred();
   
