@@ -44,6 +44,8 @@
     }
   },
   "dependencies": {
+    "chai": "^4.1.1",
+    "chai-http": "^3.0.0",
     "handlebars": "^4.0.10"
   }
 }

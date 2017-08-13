@@ -278,17 +278,16 @@
 <div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="msgLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div id="msg-modal-header" class="modal-header bg-info ">
+      <div id="msgModalHeader" class="modal-header bg-info ">
         <button type="button" class="close" data-dismiss="modal" ari  a-label="Close"><span
           aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title text-white">Message: <span id="msg-modal-title">Title</span></h4></div>
+        <h4 class="modal-title text-white">Message: <span id="msgModalTitle">Title</span></h4></div>
       <div class="modal-body">
         <p>An unexpected error has occured.</p>
-        <p id="msg-modal-text">error text goes here</p>
-        <p id="msg-modal-desc"></p>
+        <p id="msgModalDesc"></p>
         </br>
         <div class="modal-footer">
-          <button id="msgYesButton" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button id="msgModalClose" type="button" class="btn btn-default" >Close</button>
  
         </div>
       </div>
@@ -299,14 +298,13 @@
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div id="confirm-modal-header" class="modal-header bg-primary ">
+      <div id="confirmModalHeader" class="modal-header bg-primary ">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
           aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title text-white">Message: <span id="confirm-modal-title">Title</span></h4></div>
+        <h4 class="modal-title text-white"><span id="confirmModalTitle">Title</span></h4></div>
       <div class="modal-body">
-        <p>Make a choice here</p>
-        <p id="confirm-modal-text">error text goes here</p>
-        <p id="confirm-modal-desc"></p>
+        <p id="confirmModalText">error text goes here</p>
+        <p id="confirmModalDesc"></p>
         </br>
         <div class="modal-footer">
           <button id="confirmYesButton" type="button" class="btn btn-default" data-dismiss="modal">Yes</button>
@@ -318,21 +316,19 @@
   </div>
 </div>
 
-
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div id="error-modal-header" class="modal-header bg-danger">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
           aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title bg-danger text-white">Error: <span id="error-modal-title">Title</span></h4></div>
+        <h4 class="modal-title bg-danger text-white">Error: <span id="errorModalTitle">Title</span></h4></div>
       <div class="modal-body">
-        <p>An unexpected error has occured.</p>
-        <p id="error-modal-text">error text goes here</p>
-        <p id="error-modal-desc">...and thats all I know</p>
+        <p id="errorModalText">error text goes here</p>
+        <p id="errorModalDesc">...and thats all I know</p>
         </br>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="errorModalClose" class="btn btn-default" >Close</button>
         
         </div>
       </div>

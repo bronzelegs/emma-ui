@@ -487,14 +487,14 @@ function OnCreateAccount() {
       profilePromise.then(function (retVal) {
         console.log('ret from profile ' + retVal);
         getModalData(newProfile);
-        addProfile(newProfile);
+        OnAddProfile(newProfile);
         changeUser(newProfile);
         postLoginInit();
       });
     });
 }
 
-function updateProfile(){
+function updateProfile() {
   alert('we arent there yet');
 }
 function OnProfileModal(profile) {
@@ -508,12 +508,10 @@ function OnProfileModal(profile) {
   var $profileFirstName = $('#firstName');
   var $profileEmail = $('#email1');
   
-  
   setModalData(profile);
   
   $profileSaveButton.removeClass('invisible');
   $profileSaveButton.prop('disabled', false);
-  
   
   $profileError.addClass('invisible');
   $profileDlg.modal('show');
@@ -559,7 +557,7 @@ function OnPasswordModal(profile) {
   
   $passwordSaveButton.off('click').click(function () {
     newUserName = $passwordUserName.val();
-    userExists = newUserExists(newUserName);
+    userExists = OnNewUserExists(newUserName);
     
     if (!userExists) {
       var pw1 = $passwordinput.val();
@@ -590,7 +588,7 @@ function passwordCheck(pw1, pw2) {
   return ((pw1 === pw2) && (pw1.length > 8) && (pw1.length < 16) )
 }
 
-function newUserExists(userName) {
+function OnNewUserExists(userName) {
   // check to see if the profile exists
   getProfileById(userName)
     .done(function (data) {
@@ -615,10 +613,10 @@ function OnLogin() {
     $loginError.removeClass('invisible');
   } else {
     console.log(loginUserName + ' ' + loginPassword);
-    ServerLogin(loginUserName, loginPassword)
+    OnServerLogin(loginUserName, loginPassword)
       .done(function (data) {
         console.log(data);
-        getProfileById(loginUserName)
+        OnGetProfileById(loginUserName)
           .done(function (data) {
             console.log(JSON.stringify(data));
             changeUser(data.profile);
@@ -634,7 +632,7 @@ function OnLogin() {
   }
 }
 
-function getProfileById(id) {
+function OnGetProfileById(id) {
   var dfd = jQuery.Deferred();
   var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
   var jqxhr = $.getJSON(profilectrl, function () {
@@ -651,7 +649,7 @@ function getProfileById(id) {
   return dfd.promise();
 }
 
-function ServerLogin(user, password) {
+function OnServerLogin(user, password) {
   var dfd = jQuery.Deferred();
   var credentials = {'user': '', 'password': ''};
   credentials.user = user;
@@ -681,7 +679,8 @@ function ServerLogin(user, password) {
   return dfd.promise();
 }
 
-function addProfile(profile) {
+function OnAddProfile(profile) {
+  var dfd = JQuery.Deferred();
   
   console.log(profile);
   var tmmapi = 'http://api.bronzelegs.com:3100/profiles';
@@ -702,6 +701,7 @@ function addProfile(profile) {
     .always(function (data) {
       console.log('data sent was ' + JSON.stringify(data));
     });
+  return dfd.promise;
 }
 
 /*
@@ -713,47 +713,80 @@ function addProfile(profile) {
  <a href="#" class="text-danger">Danger link</a>
  
  */
-function doMsgModal(title, text) {
-  
-  $('#msg-modal-title').text(title);
-  $('#msg-modal-text').text(text);
-  $('#msgModal').modal();
+
+
+function OnErrorModal(title, text, desc) {
+  var dfd= jQuery.Deferred();
+  var $errorModal = $('#errorModal');
+  var $errorModalTitle = $('#errorModalTitle');
+  var $errorModalText = $('#errorModalText');
+  var $errorModalDesc = $('#errorModalDesc');
+  var $errorModalClose = $('#errorModalClose');
+  $errorModalTitle.text(title);
+  $errorModalText.text(text);
+  $errorModalDesc.text(desc);
+  $errorModal.modal();
+  $errorModalClose.click(function () {
+    $errorModal.modal('hide');
+    dfd.resolve(true);
+  });
+  return dfd.promise;
 }
 
-function ConfirmModal(title, msg) {
+function OnMsgModal(title, text, desc) {
+  var dfd= jQuery.Deferred();
+  var $msgModal = $('#msgModal');
+  var $msgModalTitle = $('#msgModalTitle');
+  var $msgModalText = $('#msgModalText');
+  var $msgModalDesc = $('#msgModalDesc');
+  var $msgModalClose = $('#msgModalClose');
+  $msgModalTitle.text(title);
+  $msgModalText.text(text);
+  $msgModalDesc.text(text);
+  $msgModal.modal();
+  $msgModalClose.click(function () {
+    $msgModal.modal('hide');
+    dfd.resolve(true);
+  });
+  return dfd.promise;
+}
+
+
+
+function OnConfirmModal(title, msg, desc) {
   var dfd = jQuery.Deferred();
-  var $confirmDlg = $('#confirmModal');
-  $confirmDlg.modal('show');
-  $('#confirm-modal-title').text(title);
-  $('#confirm-modal-text').text(confirm);
+  var $confirmModal = $('#confirmModal');
+  var $confirmModalTitle = $('#confirmModalTitle');
+  var $confirmModalText = $('#confirmModalText');
+  var $confirmModalDesc = $('#confirmModalDesc');
+  $confirmModalTitle.text(title);
+  $confirmModalText.text(msg);
+  $confirmModalDesc.text(desc);
+  $confirmModal.modal('show');
   $('#confirmYesButton').off('click').click(function () {
-    $confirmDlg.modal('hide');
-    //dfd.resolve(1);
-    $('#passwordEditModal').modal();
-    return 1;
+    $confirmModal.modal('hide');
+    dfd.resolve(1);
+    return true;
   });
   $('#confirmNoButton').off('click').click(function () {
-    $confirm.modal('hide');
-    return 0;
+    $confirmModal.modal('hide');
+    dfd.reject(false);
+    return false;
   });
   return dfd.promise();
 }
 
-function doConfirmModal(title, message, headerColor) {
-  var a = ConfirmModal(title, message, headerColor);
-  a.then(function (b) {
-    console.log(b);
-    alert(b)
+function OnNewConfirmModal(title, message, desc) {
+  var confirm = OnConfirmModal(title, message, desc)
+    .then(function (ret) {
+    console.log('yes', ret);
   })
+    .then(function(error) {
+    console.log('no', error);
+  });
 }
 
 
-function doErrorModal(title, text, desc) {
-  $('#error-modal-title').text(title);
-  $('#error-modal-text').text(text);
-  $('#error-modal-desc').text(desc);
-  $('#errorModal').modal();
-}
 
 function doLogoutModal() {
   doErrorModal('Je ne canna dunna', 'That code is not in my system right now', 'It probably will be soon')
@@ -766,7 +799,7 @@ function init() {
   getEmmaVersion();
   setTimeout(function () {
     $('#mindofman').slideUp().fadeOut();
-  }, 5000);
+  }, 20000);
   $('#content').slideUp().fadeOut();
   $('#informationPanel').fadeToggle('slow');
   $('#messagePanel').fadeToggle('slow');
@@ -789,7 +822,5 @@ $(document).ready(function () {
   init();
   getProfile('tdavis0525');
   console.log('emma ready!');
-  //doMsgModal('test', 'this is a test');
-  //doConfirmModal('confirm', 'still a test');
-  //doErrorModal('error','sterilize!')
+
 });
