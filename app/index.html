@@ -5,23 +5,21 @@
   <meta name="description" content="tdavis blog">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Mind of Man</title>
-  
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  
   <script src="https://use.fontawesome.com/b90ff24623.js"></script>
-  
-  
+
+
   <!-- Place favicon.ico in the root directory -->
-  
+
   <!-- build:css styles/vendor.css -->
   <!-- bower:css -->
   <!-- endbower -->
   <!-- endbuild -->
-  
+
   <!-- build:css styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
   <!-- endbuild -->
-  
+
   <!-- build:js scripts/vendor/modernizr.js -->
   <script src="/bower_components/modernizr/modernizr.js"></script>
   <!-- endbuild -->
@@ -34,7 +32,7 @@
 <div class="container emma-full-bg">
   <div class="col-sm-12 ">
     <div id="mindofman" class="row " onclick="toggleHeader()">
-      
+
       <div class=" col-sm-5">
         <span class="avatar-text">The Mind of Man</span>
       </div>
@@ -71,7 +69,6 @@
             <td id="ontology-vers-string" class="my-table-col2">0.0.0.a</td>
             <td id="ontology-timestamp" class="my-table-col3">undefined</td>
           </tr>
-          
           <tr>
             <th colspan="3" class="my-table-header">components</th>
           </tr>
@@ -79,26 +76,23 @@
             <td id="ui-vers-desc" class="my-table-col1" class="my-table-col1">UI</td>
             <td id="ui-vers-string" class="my-table-col2">0.0.0.a</td>
             <td id="ui-timestamp" class="my-table-col3">undefined</td>
-          
           </tr>
           <tr>
             <td id="cloud-vers-desc" class="my-table-col1" class="my-table-col1">Cloud</td>
             <td id="cloud-vers-string" class="my-table-col2">0.0.0.a</td>
             <td id="cloud-timestamp" class="my-table-col3">undefined</td>
-          
           </tr>
           <tr>
             <td id="tmm-vers-desc" class="my-table-col1" class="my-table-col1">Mind of Man</td>
             <td id="tmm-vers-string" class="my-table-col2">0.0.0.a</td>
             <td id="tmm-timestamp" class="my-table-col3">undefined</td>
-          
           </tr>
         </table>
       </div>
     </div>
-  
+
   </div>
-  
+
   <div class="col-sm-12 translucent">
     <div id="loginPanel" class="row section-header">
       <div class="row ">
@@ -151,7 +145,7 @@
           </form>
         </div>
       </div>
-      
+
       <br>
       <div id="login" class="row">
         <div class="col-sm-12">
@@ -164,7 +158,7 @@
       </div>
     </div>
   </div><!-- col-lg-12 -->
-  
+
   <div class="col-sm-12 translucent ">
     <div id="content" class="row invisible"><!-- a hidden panel -->
       <div id="informationPanel" class="row">
@@ -183,11 +177,11 @@
           </div>
         </div>
       </div><!-- row for information panel  -->
-      
+
       <div class="row"><!-- session control area -->
         <div class="col-sm-10 section-header">
           <span class="avatar-text " onclick="toggleHeader()">Emma</span>
-          
+
           <span class="pull-right">
             <button onclick="myInfoPanel()"><span class="fa fa-info-circle"></span></button>
             <button onclick="myDataPanel()"><span class="fa fa-exclamation-circle"></span></button>
@@ -195,7 +189,9 @@
             <button data-toggle="modal" ><span class="fa fa-sign-in" onClick="doLogoutModal();"></span></button>
           </span><!-- toolbar -->
         </div>
-      </div><!-- session control area -->
+      </div>
+      <!-- session control area -->
+
       <!-- conversation  control area -->
       <!-- row -->
       <div class="row">
@@ -241,7 +237,7 @@
           <button type="button" onclick="clickedMe()" class="btn btn-primary">Send</button>
           <button type="button" onclick="resetMe()" class="btn btn-default">Reset</button>
         </div>
-      
+
       </div><!-- bot response with indicator title line, message area, and command buttons -->
       <!-- message information panel(s) -->
       <div class="row">
@@ -256,7 +252,7 @@
           </div>
         </div>
       </div><!-- message information panel(s) -->
-      
+
       <br>
     </div><!-- col-lg-12 -->
     <div class="footer">
@@ -288,7 +284,6 @@
         </br>
         <div class="modal-footer">
           <button id="msgModalClose" type="button" class="btn btn-default" >Close</button>
- 
         </div>
       </div>
     </div>
@@ -308,7 +303,7 @@
         </br>
         <div class="modal-footer">
           <button id="confirmYesButton" type="button" class="btn btn-default" data-dismiss="modal">Yes</button>
-  
+
           <button id ="confirmNoButton" type="button" class="btn btn-default" data-dismiss="modal">No</button>
         </div>
       </div>
@@ -329,7 +324,6 @@
         </br>
         <div class="modal-footer">
           <button type="button" id="errorModalClose" class="btn btn-default" >Close</button>
-        
         </div>
       </div>
     </div>

@@ -67,7 +67,7 @@ function receiveMsg(s) {
 
 var personalityProfile = {
   'userName': 'emma-zero',
-  'image': 'images/lg-animated.gif',
+  'image': 'images/emma-logo.png',
   'firstName': 'Emma',
   'middleName': 'Lemon',
   'lastName': 'Peel',
@@ -122,7 +122,7 @@ Profile.prototype.getProfile = function (userName = this.userName) {
   var jqxhr = $.getJSON(profilectrl, function () {
     })
     .done(function (data) {
-      if (data.profile != null){
+      if (data.profile != null) {
         that.copy(data.profile);
         dfd.resolve(data);
         return true;
@@ -154,7 +154,7 @@ Profile.prototype.updateProfile = function (userName = this.userName) {
       data: p
     })
     .done(function (data) {
-      if (data.profile != null){
+      if (data.profile != null) {
         dfd.resolve(data);
         return true;
       } else {
@@ -172,7 +172,7 @@ Profile.prototype.updateProfile = function (userName = this.userName) {
   return dfd.promise();
 };
 
-Profile.prototype.addProfile = function(profile = this){
+Profile.prototype.addProfile = function (profile = this) {
   var dfd = jQuery.Deferred();
   var tmmapi = 'http://api.bronzelegs.com:3100/profiles';
   var jqxhr = $.ajax({
@@ -183,7 +183,7 @@ Profile.prototype.addProfile = function(profile = this){
       data: JSON.stringify(profile)
     })
     .done(function (data) {
-      if (data.profile != null){
+      if (data.profile != null) {
         dfd.resolve(data);
         return true;
       } else {
@@ -201,7 +201,7 @@ Profile.prototype.addProfile = function(profile = this){
 };
 
 function Session() {
-  this._activeUser = '';
+  this._activeProfile = '';
   this._personality = '';
   this.connected = false;
 }
@@ -212,7 +212,7 @@ function setActiveProfile(profile) {
 
 var activeProfile = defaultProfile;
 
-Session.prototype.setActiveUser = function (profile) {
+Session.prototype.setActiveProfile = function (profile) {
   this._activeUser = profile;
 };
 
@@ -255,7 +255,7 @@ Version.prototype.about = function () {
 
 Version.prototype.getVersion = function (url, version) {
   var _url = (url === undefined) ? 'http://api.bronzelegs.com:3000/emma/version' : url;
-  
+
   var jqxhr = $.getJSON(emmactrl, function () {
       //alert('success');
     })
@@ -292,37 +292,37 @@ function Versions() {
 }
 
 function updateVersionData() {
-  
+
   $('#emmaVer').text(emmaVer.about() + ' ' + emmaVer.versionString() + ' ' + emmaVer.timeStamp());
-  
+
   $('#ctrl-chan-vers-desc').text(controlChanVer.about());
   $('#ctrl-chan-vers-string').text(controlChanVer.versionString());
   $('#ctrl-chan-timestamp').text(controlChanVer.timeStamp());
-  
+
   $('#grammar-vers-desc').text('grammar ' + grammarVer.about());
   $('#grammar-vers-string').text(grammarVer.versionString());
   $('#grammar-timestamp').text(grammarVer.timeStamp());
-  
+
   $('#model-vers-desc').text('model ' + modelVer.about());
   $('#model-vers-string').text(modelVer.versionString());
   $('#model-timestamp').text(modelVer.timeStamp());
-  
+
   $('#reactive-vers-desc').text('reactive ' + reactiveVer.about());
   $('#reactive-vers-string').text(reactiveVer.versionString());
   $('#reactive-timestamp').text(reactiveVer.timeStamp());
-  
+
   $('#ontology-vers-desc').text('ontology ' + ontologyVer.about());
   $('#ontology-vers-string').text(ontologyVer.versionString());
   $('#ontology-timestamp').text(ontologyVer.timeStamp());
-  
+
   $('#ui-vers-desc').text('UI ' + uiVer.about());
   $('#ui-vers-string').text(uiVer.versionString());
   $('#ui-timestamp').text(uiVer.timeStamp());
-  
+
   $('#cloud-vers-desc').text('cloud ' + cloudVer.about());
   $('#cloud-vers-string').text(cloudVer.versionString());
   $('#cloud-timestamp').text(cloudVer.timeStamp());
-  
+
   $('#tmm-vers-desc').text('MindOfMan ' + tmmVer.about());
   $('#tmm-vers-string').text(tmmVer.versionString());
   $('#tmm-timestamp').text(tmmVer.timeStamp());
@@ -336,11 +336,11 @@ function updateVersionSelector(selectorStub, version) {
 
 function getEmmaVersion() {
   var emmactrl = 'http://api.bronzelegs.com:3000/emma/version';
-  
+
   var jqxhr = $.getJSON(emmactrl, function () {
     })
     .done(function (data) {
-      
+
       controlChanVer = new Version(data.response.version);
       updateVersionData();
     })
@@ -348,21 +348,6 @@ function getEmmaVersion() {
     })
     .always(function (data) {
       console.log('version data' + data);
-    });
-}
-
-function getVersion(url, version, selector) {
-  var jqxhr = $.getJSON(url, function () {
-    })
-    .done(function (data) {
-      console.log('version data' + data);
-      version = new Version(data.response.version);
-      updateVersionSelector(selector);
-    })
-    .fail(function () {
-      $('#awstest').text('server does not appear to be running');
-    })
-    .always(function () {
     });
 }
 
@@ -410,20 +395,11 @@ var resetHeaderState = debounce(function () {
 }, 5000);
 
 
-var emmaVer = new Version();
-var controlChanVer = new Version();
-var grammarVer = new Version();
-var modelVer = new Version();
-var reactiveVer = new Version();
-var ontologyVer = new Version();
-var uiVer = new Version();
-var cloudVer = new Version();
-var tmmVer = new Version();
 
 
 function getProfiles() {
   var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/';
-  
+
   var jqxhr = $.getJSON(profilesctrl, function () {
     })
     .done(function (data) {
@@ -437,7 +413,7 @@ function getProfiles() {
 
 function getProfile(id) {
   var profilectrl = 'http://api.bronzelegs.com:3100/profiles/' + id.trim();
-  
+
   var jqxhr = $.getJSON(profilectrl, function () {
     })
     .done(function (data) {
@@ -450,7 +426,7 @@ function getProfile(id) {
     });
 }
 
-function updateProfile(profile = activeProfile){
+function updateProfile(profile = activeProfile) {
   getModalData(profile);
   OnUpdateProfile(profile);
   var $profileModal = $('#profileModal');
@@ -467,7 +443,7 @@ function OnUpdateProfile(profile = activeProfile) {
       data: JSON.stringify(profile)
     })
     .done(function (data) {
-      if (data.profile != null){
+      if (data.profile != null) {
         dfd.resolve(data);
         return true;
       } else {
@@ -476,30 +452,13 @@ function OnUpdateProfile(profile = activeProfile) {
       }
     })
     .fail(function (error) {
-      dfd.reject(error)
+      dfd.reject(error);
       return false;
     })
     .always(function (data) {
       console.log('updateProfile: ', JSON.stringify(data));
     });
   return dfd.promise();
-}
-
-function UpdateProfile(id, profile) {
-  var profilesctrl = 'http://api.bronzelegs.com:3100/profiles/' + id;
-  $.ajax({
-      url: profilesctrl, type: 'put', data: JSON.stringify(profile), headers: {}, dataType: 'json'
-    })
-    .done(function (data) {
-      console.log(data);
-      return true;
-    })
-    .fail(function () {
-      console.log('failed?');
-      return false;
-    })
-    .always(function () {
-    });
 }
 
 
@@ -511,7 +470,7 @@ function OnProfileEdit(profile) {
   setModalData(profile);
   var $profileFormInput = $('#profileForm :input');
   var $profileSaveButton = $('#profileSaveButton');
-  
+
   if (profile.isABot) {
     $profileFormInput.prop('disabled', true);
     $profileSaveButton.addClass('invisible');
@@ -520,11 +479,11 @@ function OnProfileEdit(profile) {
     $profileFormInput.prop('disabled', false);
     $profileSaveButton.removeClass('invisible');
   }
-  
+
   $profileFormInput.bind('change keyup', function () {
     $profileSaveButton.prop('disabled', false);
   });
-  
+
   $('#profileModal').modal()
 }
 
@@ -534,7 +493,7 @@ function OnPasswordEdit(profile) {
     alert('passed');
   }
   //$('#passwordEditModal').prop('disabled', true);
-  
+
   $('#passwordModal').modal();
 }
 
@@ -564,9 +523,9 @@ function getModalData(profile) {
 function OnCreateAccount() {
   var newProfile = new Profile();
   var retVal = false;
-  
+
   var passwordPromise = OnPasswordModal(newProfile);
-  
+
   passwordPromise.then(function (retVal) {
       console.log('ret from password ' + retVal);
       if (retVal) {
@@ -588,7 +547,7 @@ function OnCreateAccount() {
 
 function OnProfileModal(profile) {
   var dfd = jQuery.Deferred();
-  
+
   var $profileForm = $('#profileForm :input');
   var $profileDlg = $('#profileModal');
   var $profileSaveButton = $('#profileSaveButton');
@@ -596,15 +555,15 @@ function OnProfileModal(profile) {
   var $profileError = $('#profileError');
   var $profileFirstName = $('#firstName');
   var $profileEmail = $('#email1');
-  
+
   setModalData(profile);
-  
+
   $profileSaveButton.removeClass('invisible');
   $profileSaveButton.prop('disabled', false);
-  
+
   $profileError.addClass('invisible');
   $profileDlg.modal('show');
-  
+
   $profileSaveButton.off('click').click(function () {
     // at least first name and email
     if (($profileFirstName.val().length) && ($profileEmail.val().length)) {
@@ -634,19 +593,19 @@ function OnPasswordModal(profile) {
   var $passwordModalName = $('#passwordModalName');
   var $passwordinput = $('#passwordinput');
   var $passwordinputclone = $('#passwordinputclone');
-  
+
   var newUserName = profile.userName;
   var userExists = false;
-  
+
   $passwordError.addClass('invisible');
   $userExists.addClass('invisible');
   $passwordModalName.text(newUserName);
   $passwordDlg.modal('show');
-  
+
   $passwordSaveButton.off('click').click(function () {
     newUserName = $passwordUserName.val();
     userExists = OnNewUserExists(newUserName);
-    
+
     if (!userExists) {
       var pw1 = $passwordinput.val();
       var pw2 = $passwordinputclone.val();
@@ -663,7 +622,7 @@ function OnPasswordModal(profile) {
       $userExists.removeClass('invisible');
     }
   });
-  
+
   $passwordCancelButton.off('click').click(function () {
     $passwordDlg.modal('hide');
     dfd.reject(false);
@@ -678,7 +637,7 @@ function passwordCheck(pw1, pw2) {
 
 function OnNewUserExists(userName) {
   // check to see if the profile exists
-  getProfileById(userName)
+  OnGetProfileById(userName)
     .done(function (data) {
       console.log(data);
       return (data.profile != null);
@@ -768,7 +727,7 @@ function OnServerLogin(user, password) {
 
 function OnAddProfile(profile) {
   var dfd = jQuery.Deferred();
-  
+
   console.log(profile);
   var tmmapi = 'http://api.bronzelegs.com:3100/profiles';
   var jqxhr = $.ajax({
@@ -798,7 +757,7 @@ function OnAddProfile(profile) {
  <a href="#" class="text-info">Info link</a>
  <a href="#" class="text-warning">Warning link</a>
  <a href="#" class="text-danger">Danger link</a>
- 
+
  */
 
 function OnErrorModal(title, text, desc) {
@@ -870,7 +829,6 @@ function OnNewConfirmModal(title, message, desc) {
     });
 }
 
-
 function doLogoutModal() {
   OnErrorModal('Je ne canna dunna', 'That code is not in my system right now', 'It probably will be soon')
 }
@@ -887,13 +845,13 @@ function init() {
   $('#informationPanel').fadeToggle('slow');
   $('#messagePanel').fadeToggle('slow');
   $('#dataPanel').fadeToggle('slow');
-  
+
 }
 
 function changeUser(profile) {
   setActiveProfile(profile);
   $('#profileImage').attr('src', profile.image);
-  
+
 }
 
 function postLoginInit() {
@@ -901,8 +859,41 @@ function postLoginInit() {
   $('#loginPanel').addClass('invisible').slideUp('slow').fadeOut();
 }
 
+
+/*
+ * globals
+ */
+
+ var emmaVer = new Version();
+ var controlChanVer = new Version();
+ var grammarVer = new Version();
+ var modelVer = new Version();
+ var reactiveVer = new Version();
+ var ontologyVer = new Version();
+ var uiVer = new Version();
+ var cloudVer = new Version();
+ var tmmVer = new Version();
+
+
+  var dirty = true;
+
+
 $(document).ready(function () {
   init();
-  getProfile('tdavis0525');
+
+
+  $(window).bind('beforeunload', function(){
+    if (dirty){
+      console.log('dirty');
+      return 'you will lose your conversation if you leave';
+    } else {
+      console.log('not dirty');
+      return false;
+    }
+  });
+  $(window).on('unload', function(){
+    //logout();
+  });
+
   console.log('emma ready!');
 });
